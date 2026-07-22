@@ -1,0 +1,50 @@
+<?php
+
+return [
+    'menu' => [
+        'menu' => 'Menu',
+        'master_data' => 'Master Data',
+        'academic' => 'Akademik',
+        'finance' => 'Keuangan',
+        'dashboard' => 'Dashboard',
+        'chat_admin' => 'Chat Admin',
+        'student_data' => 'Data Siswa',
+        'exam_questions' => 'Soal Ujian',
+        'users' => 'Manajemen User',
+        'subjects' => 'Mata Pelajaran',
+        'attendance' => 'Absensi',
+        'attendance_input' => 'Input Absensi',
+        'schedule' => 'Jadwal Mata Pelajaran',
+        'manage_exam' => 'Manajemen Ujian',
+        'score_input' => 'Input Nilai',
+        'uts' => 'Ujian UTS',
+        'exam_results_teacher' => 'Hasil Ujian Siswa', // New menu item
+        'uas' => 'Ujian UAS',
+        'my_scores' => 'Nilai Saya',
+        'spp_payment' => 'Pembayaran SPP',
+        'spp_report' => 'Laporan SPP',
+        'finance_report' => 'Laporan Keuangan',
+        'teacher_monitor' => 'Monitor Guru Mengajar',
+        'announcements' => 'Pengumuman',
+        'create_bill' => 'Buat Tagihan',
+        'logout' => 'Keluar',
+    ],
+    'roles' => [
+        'admin' => 'Admin',
+        'guru' => 'Guru',
+        'siswa' => 'Siswa',
+        'kepala_sekolah' => 'Kepala Sekolah',
+    ],
+    'prefs' => [
+        'language' => 'Bahasa',
+        'theme' => 'Tema',
+        'indonesian' => 'Indonesia',
+        'english' => 'Inggris',
+        'light' => 'Terang',
+        'dark' => 'Gelap',
+        'save' => 'Simpan',
+    ],
+    'misc' => [
+        'new' => 'BARU',
+    ],
+];

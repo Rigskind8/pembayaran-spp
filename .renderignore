@@ -1,0 +1,11 @@
+vendor/
+node_modules/
+.env
+.env.*
+storage/*.key
+storage/*.sqlite
+.vscode/
+.idea/
+.git/
+tests/
+README.md
