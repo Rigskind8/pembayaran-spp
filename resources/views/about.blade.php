@@ -239,7 +239,7 @@
             radial-gradient(circle at top right, rgba(14, 165, 233, 0.16), transparent 32%),
             linear-gradient(180deg, #ffffff 0%, #eef3fb 100%);
         color: var(--ink);
-        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        font-family: 'Plus Jakarta Sans', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
         overflow: hidden;
     }
     .scroll-progress {
@@ -742,8 +742,37 @@
         86% { box-shadow: 0 24px 40px rgba(29,78,216,.34); }
     }
     .section-head .eyebrow { box-shadow: 0 8px 18px rgba(29,78,216,.06); }
+    .float-wa {
+        position: fixed;
+        bottom: 28px;
+        right: 28px;
+        z-index: 999;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 22px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+        color: #ffffff !important;
+        font-weight: 800;
+        font-size: 14px;
+        text-decoration: none;
+        box-shadow: 0 14px 30px rgba(37, 211, 102, 0.4);
+        transition: transform .25s ease, box-shadow .25s ease;
+        animation: floatWa 3s ease-in-out infinite;
+    }
+    .float-wa:hover {
+        transform: translateY(-4px) scale(1.04);
+        box-shadow: 0 20px 38px rgba(37, 211, 102, 0.55);
+        color: #ffffff !important;
+    }
+    .float-wa i { font-size: 20px; }
+    @keyframes floatWa {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-6px); }
+    }
     @media (max-width: 1024px) { .hero, .two-col, .contact-grid, .program-grid, .gallery-grid, .stats, .feature-grid, .testimonial-grid, .location-grid, .achievement-strip { grid-template-columns: 1fr 1fr; } .hero { grid-template-columns: 1fr; } .about-nav { flex-wrap: wrap; } .hero-panel { grid-template-columns: 1fr 1fr; } }
-    @media (max-width: 768px) { .about-shell { padding: 0 18px; } .hero, .stats, .two-col, .program-grid, .gallery-grid, .contact-grid, .footer-top, .feature-grid, .testimonial-grid, .location-grid, .achievement-strip { grid-template-columns: 1fr; } .hero-panel { grid-template-columns: 1fr; } .gallery-card.big { min-height: 260px; grid-row: auto; } .cta-card { flex-direction: column; align-items:flex-start; } .nav-actions { width:100%; } .hero-img { min-height: 260px; } .map-frame { min-height: 280px; } }
+    @media (max-width: 768px) { .about-shell { padding: 0 18px; } .hero, .stats, .two-col, .program-grid, .gallery-grid, .contact-grid, .footer-top, .feature-grid, .testimonial-grid, .location-grid, .achievement-strip { grid-template-columns: 1fr; } .hero-panel { grid-template-columns: 1fr; } .gallery-card.big { min-height: 260px; grid-row: auto; } .cta-card { flex-direction: column; align-items:flex-start; } .nav-actions { width:100%; } .hero-img { min-height: 260px; } .map-frame { min-height: 280px; } .float-wa span { display:none; } .float-wa { padding: 14px; border-radius: 50%; bottom: 20px; right: 20px; } }
 </style>
 
 <div class="about-wrap">
@@ -1140,7 +1169,10 @@
                 </div>
             </div>
         </footer>
-    </div>
+    <a href="{{ $waAdminUrl }}" target="_blank" rel="noopener" class="float-wa" title="Konsultasi via WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+        <span>Chat Admin</span>
+    </a>
 
     <div class="lightbox" id="about-lightbox" aria-hidden="true">
         <img src="" alt="" id="about-lightbox-img">
