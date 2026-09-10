@@ -671,7 +671,7 @@ class UjianController extends Controller
         $sessionKey = $this->examSessionKey($jenis, $subject);
         $existing = session($sessionKey);
 
-        if (is_array($existing) && isset($existing['started_at'], $existing['question_order'], $existing['option_orders'])) {
+        if (is_array($existing) && isset($existing['started_at'], $existing['question_order'])) {
             $startedAt = Carbon::parse($existing['started_at']);
             $duration = (int) ($existing['duration_minutes'] ?? ($this->examDurationMinutes($jenis)));
             $endsAt = $startedAt->copy()->addMinutes($duration);
@@ -681,19 +681,24 @@ class UjianController extends Controller
                 ->values()
                 ->all();
 
+            $optionOrders = [];
+            foreach ($questionOrder as $qid) {
+                $optionOrders[$qid] = ['a', 'b', 'c', 'd'];
+            }
+
             return [
                 'started_at' => $startedAt,
                 'ends_at' => $endsAt,
                 'duration_minutes' => $duration,
                 'question_order' => $questionOrder,
-                'option_orders' => (array) $existing['option_orders'],
+                'option_orders' => $optionOrders,
             ];
         }
 
-        $questionOrder = $questions->pluck('id')->shuffle()->take(self::EXAM_QUESTION_LIMIT)->values()->all();
+        $questionOrder = $questions->take(self::EXAM_QUESTION_LIMIT)->pluck('id')->values()->all();
         $optionOrders = [];
         foreach ($questionOrder as $questionId) {
-            $optionOrders[$questionId] = collect(['a', 'b', 'c', 'd'])->shuffle()->values()->all();
+            $optionOrders[$questionId] = ['a', 'b', 'c', 'd'];
         }
 
         $startedAt = now();
@@ -728,13 +733,18 @@ class UjianController extends Controller
 
         $startedAt = Carbon::parse($data['started_at']);
         $duration = (int) ($data['duration_minutes'] ?? $this->examDurationMinutes($jenis));
+        $questionOrder = collect($data['question_order'] ?? [])->map(fn ($id) => (int) $id)->values()->all();
+        $optionOrders = [];
+        foreach ($questionOrder as $qid) {
+            $optionOrders[$qid] = ['a', 'b', 'c', 'd'];
+        }
 
         return [
             'started_at' => $startedAt,
             'ends_at' => $startedAt->copy()->addMinutes($duration),
             'duration_minutes' => $duration,
-            'question_order' => collect($data['question_order'] ?? [])->map(fn ($id) => (int) $id)->values()->all(),
-            'option_orders' => (array) ($data['option_orders'] ?? []),
+            'question_order' => $questionOrder,
+            'option_orders' => $optionOrders,
         ];
     }
 

@@ -640,7 +640,7 @@
             <div class="question-list">
                 @foreach($questions as $index => $question)
                     @php
-                        $optionOrder = $optionOrders[$question->id] ?? ['a', 'b', 'c', 'd'];
+                        $optionOrder = ['a', 'b', 'c', 'd'];
                     @endphp
                     <div class="q-card" id="questionCard_{{ $question->id }}" data-qid="{{ $question->id }}" data-index="{{ $index + 1 }}">
                         <div class="q-card-head">
