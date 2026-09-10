@@ -1,4 +1,4 @@
-@extends('layouts.app')
+﻿@extends('layouts.app')
 
 @section('title', 'Absen Mapel Hari Ini')
 
@@ -20,29 +20,27 @@
     --shadow: 0 14px 32px rgba(15, 23, 42, .08);
 }
 
-.main {
-    margin-left: var(--sb, 250px);
-    min-height: 100vh;
-    background: radial-gradient(circle at 90% 0%, rgba(14, 165, 233, .14), transparent 28%), var(--bg);
-}
-
 .page-wrap {
-    padding: 28px;
+    padding: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
-.topbar {
+.topbar-box {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    gap: 10px;
-    margin-bottom: 18px;
+    gap: 14px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
 }
 
 .title {
-    font-size: 30px;
+    font-size: 28px;
     font-weight: 800;
     letter-spacing: -.02em;
     color: var(--text);
+    margin: 0;
 }
 
 .subtitle {
@@ -55,32 +53,32 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    padding: 8px 12px;
+    padding: 8px 14px;
     border: 1px solid var(--line);
     border-radius: 999px;
     background: var(--card);
-    color: var(--muted);
-    font-size: 12px;
+    color: var(--text);
+    font-size: 13px;
     font-weight: 700;
 }
 
 .hero {
-    border-radius: 24px;
+    border-radius: 20px;
     padding: 22px 24px;
     color: #f8fdff;
-    margin-bottom: 18px;
+    margin-bottom: 20px;
     background: linear-gradient(135deg, #0369a1 0%, #0284c7 56%, #0ea5e9 100%);
     box-shadow: 0 16px 40px rgba(3, 105, 161, .28);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 14px;
-    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    gap: 16px;
+    flex-wrap: wrap;
 }
 
-.hero h2, .hero h3 {
+.hero h2 {
     margin: 0 0 6px;
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 800;
 }
 
@@ -90,83 +88,62 @@
     font-size: 13px;
 }
 
-.hero-progress {
-    width: 100%;
-    height: 8px;
-    background: rgba(255, 255, 255, .2);
-    border-radius: 999px;
-    overflow: hidden;
-    margin-top: 10px;
-}
-.hero-progress-bar {
-    height: 100%;
-    background: #ffffff;
-    border-radius: 999px;
-}
-
 .hero-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); /* Responsive stats */
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
 }
 
 .stat {
     background: rgba(255, 255, 255, .18);
     border: 1px solid rgba(255, 255, 255, .28);
     border-radius: 14px;
-    padding: 10px 12px;
+    padding: 10px 14px;
     text-align: center;
+    min-width: 90px;
 }
 
 .stat strong {
     display: block;
-    font-size: 20px;
+    font-size: 22px;
     line-height: 1;
 }
 
 .stat span {
-    font-size: 10px;
+    font-size: 11px;
     text-transform: uppercase;
-    letter-spacing: .08em;
+    letter-spacing: .06em;
     font-weight: 700;
 }
 
-.alert-success {
-    border-radius: 14px;
-    padding: 12px 14px;
-    background: #ecfdf5;
-    color: #14532d;
-    border: 1px solid #a7f3d0;
-    margin-bottom: 14px;
-    font-size: 13px;
-    font-weight: 700;
-}
-
-.grid {
+.grid-cards {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 18px;
 }
 
-@media (max-width: 980px) {
-    .grid { grid-template-columns: 1fr; }
+@media (max-width: 640px) {
+    .grid-cards { grid-template-columns: 1fr; }
 }
 
-.card {
+.card-schedule {
     border-radius: 18px;
     background: var(--card);
     border: 1px solid var(--line);
     box-shadow: var(--shadow);
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 .card-head {
     background: #f8fafc;
     border-bottom: 1px solid var(--line);
-    padding: 14px 16px;
+    padding: 14px 18px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
 }
 
 .subject-name {
@@ -184,12 +161,12 @@
 
 .status-badge {
     border-radius: 999px;
-    padding: 6px 11px;
+    padding: 6px 12px;
     font-size: 11px;
     font-weight: 800;
     display: inline-flex;
     align-items: center;
-    white-space: nowrap; /* Prevent badge text from wrapping */
+    white-space: nowrap;
     gap: 5px;
 }
 
@@ -199,544 +176,523 @@
 .status-alpha { background: #fef2f2; color: var(--danger); }
 .status-empty { background: #f1f5f9; color: #475569; }
 
-.card-body {
-    padding: 16px;
+.card-body-content {
+    padding: 18px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .info-list {
     display: grid;
-    gap: 8px;
+    gap: 10px;
 }
 
 .info-row {
-    display: grid;
-    grid-template-columns: 28px 1fr;
-    gap: 10px;
+    display: flex;
     align-items: center;
+    gap: 12px;
     color: #334155;
     font-size: 13px;
 }
 
-.icon {
-    width: 28px;
-    height: 28px;
-    border-radius: 9px;
-    display: grid;
-    place-items: center;
+.info-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: var(--brand-soft);
     color: var(--brand);
-    font-size: 12px;
+    font-size: 13px;
+    flex-shrink: 0;
 }
 
-.current-note {
-    margin-top: 12px;
-    padding: 12px;
-    border-radius: 12px;
-    border: 1px solid var(--line);
-    background: #f8fafc;
-    font-size: 12px;
-    color: #475569;
-}
-
-.actions {
-    margin-top: 14px;
+.actions-grid {
+    margin-top: 18px;
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 8px;
+}
+
+@media (max-width: 440px) {
+    .actions-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 .btn-status {
     border: 1px solid var(--line);
     border-radius: 12px;
-    padding: 11px 8px;
+    padding: 10px 6px;
     font-size: 12px;
-    line-height: 1.2; /* Better line height for text */
     font-weight: 800;
     cursor: pointer;
     background: #ffffff;
-    transition: .18s ease;
-    box-shadow: inset 0 0 0 1px transparent;
+    transition: all .2s ease;
+    text-align: center;
 }
 
 .btn-status:hover {
-    color: #ffffff !important; /* Ensure text color changes on hover */
-    transform: translateY(-1px);
-    box-shadow: 0 8px 18px rgba(15, 23, 42, .08);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(15, 23, 42, .08);
 }
 
-.btn-hadir {
-    color: #065f46;
-    border-color: #a7f3d0;
-    background: linear-gradient(180deg, #ecfdf5 0%, #d1fae5 100%); /* Light green */
-}
+.btn-hadir { color: #065f46; border-color: #a7f3d0; background: #ecfdf5; }
+.btn-hadir:hover { background: #059669; color: #fff; border-color: #059669; }
 
-.btn-hadir:hover {
-    border-color: #059669;
-    background: linear-gradient(180deg, #10b981 0%, #059669 100%); /* Darker green */
-}
+.btn-sakit { color: #92400e; border-color: #fcd34d; background: #fffbeb; }
+.btn-sakit:hover { background: #d97706; color: #fff; border-color: #d97706; }
 
-.btn-sakit {
-    color: #92400e;
-    border-color: #fcd34d;
-    background: linear-gradient(180deg, #fffbeb 0%, #fef3c7 100%); /* Light amber */
-}
+.btn-izin { color: #1e40af; border-color: #bfdbfe; background: #eff6ff; }
+.btn-izin:hover { background: #2563eb; color: #fff; border-color: #2563eb; }
 
-.btn-sakit:hover {
-    border-color: #d97706;
-    background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%); /* Darker amber */
-}
+.btn-alpha { color: #991b1b; border-color: #fecaca; background: #fef2f2; }
+.btn-alpha:hover { background: #dc2626; color: #fff; border-color: #dc2626; }
 
-.btn-izin {
-    color: #1e40af;
-    border-color: #bfdbfe;
-    background: linear-gradient(180deg, #eff6ff 0%, #dbeafe 100%); /* Light blue */
-}
-
-.btn-izin:hover {
-    border-color: #2563eb;
-    background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%); /* Darker blue */
-}
-
-.btn-alpha {
-    color: #991b1b;
-    border-color: #fecaca;
-    background: linear-gradient(180deg, #fef2f2 0%, #fee2e2 100%); /* Light red */
-}
-
-.btn-alpha:hover {
-    color: #ffffff;
-    border-color: #dc2626;
-    background: linear-gradient(180deg, #ef4444 0%, #dc2626 100%);
+.attendance-done {
+    margin-top: 14px;
+    padding: 12px;
+    border-radius: 12px;
+    background: #f8fafc;
+    border: 1px solid var(--line);
+    font-size: 12px;
 }
 
 .empty-state {
-    margin-top: 10px;
     border-radius: 18px;
     border: 1px solid var(--line);
     background: var(--card);
     text-align: center;
-    padding: 34px 20px;
+    padding: 40px 20px;
     color: var(--muted);
 }
 
-.empty-state i {
-    font-size: 38px;
-    color: var(--brand);
-    margin-bottom: 12px;
-}
-
-.empty-state a {
-    margin-top: 12px;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    text-decoration: none;
-    background: var(--brand);
-    color: #ffffff;
-    font-weight: 700;
-    border-radius: 12px;
-    padding: 10px 14px;
-}
-
-.modal {
+/* Modal Styling */
+.modal-custom {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(15, 23, 42, .5);
-    z-index: 2000;
+    background: rgba(15, 23, 42, .6);
+    backdrop-filter: blur(4px);
+    z-index: 9999;
     align-items: center;
     justify-content: center;
     padding: 16px;
 }
 
-.modal.show { display: flex; }
-
-.modal-box {
-    width: 100%;
-    max-width: 500px;
-    background: #ffffff;
-    border-radius: 20px;
-    border: 1px solid var(--line);
-    box-shadow: 0 24px 60px rgba(15, 23, 42, .2);
-    overflow: hidden;
+.modal-custom.is-open {
+    display: flex;
 }
 
-.modal-head {
-    padding: 16px 18px;
+.modal-card {
+    width: 100%;
+    max-width: 480px;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 24px 60px rgba(15, 23, 42, .25);
+    overflow: hidden;
+    animation: modalPop .2s ease;
+}
+
+@keyframes modalPop {
+    from { opacity: 0; transform: scale(.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.modal-header-box {
+    padding: 16px 20px;
+    background: #f8fafc;
     border-bottom: 1px solid var(--line);
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.modal-title {
+.modal-title-text {
     margin: 0;
     font-size: 17px;
     font-weight: 800;
     color: var(--text);
 }
 
-.modal-close {
+.modal-close-btn {
     border: none;
     background: transparent;
+    font-size: 22px;
     color: var(--muted);
-    font-size: 24px;
     cursor: pointer;
 }
 
-.modal-body {
-    padding: 16px 18px 8px;
+.modal-body-box {
+    padding: 18px 20px;
 }
 
-.group {
-    margin-bottom: 13px;
+.modal-group {
+    margin-bottom: 14px;
 }
 
-.label {
+.modal-label {
     display: block;
     margin-bottom: 6px;
-    color: var(--muted);
     font-size: 12px;
     font-weight: 700;
+    color: var(--muted);
 }
 
-.control {
+.modal-input {
     width: 100%;
     border: 1px solid var(--line);
-    border-radius: 12px;
-    min-height: 42px;
-    padding: 10px 12px;
+    border-radius: 10px;
+    padding: 9px 12px;
     font-size: 13px;
     font-family: inherit;
     color: var(--text);
     background: #ffffff;
 }
 
-.control[readonly] {
+.modal-input[readonly] {
     background: #f8fafc;
 }
 
-.control:focus {
-    outline: none;
-    border-color: var(--brand);
-    box-shadow: 0 0 0 3px rgba(14, 165, 233, .14);
-}
-
-.modal-foot {
+.modal-footer-box {
+    padding: 14px 20px;
     border-top: 1px solid var(--line);
-    padding: 12px 18px;
+    background: #f8fafc;
     display: flex;
     justify-content: flex-end;
-    gap: 8px;
+    gap: 10px;
 }
 
-.btn-modal {
-    border: none;
-    border-radius: 11px;
-    padding: 10px 14px;
+.btn-batal {
+    padding: 9px 16px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: #ffffff;
     font-weight: 700;
     font-size: 13px;
     cursor: pointer;
 }
 
-.btn-secondary { background: #e2e8f0; color: #334155; }
-.btn-primary { background: var(--brand); color: #ffffff; }
-
-@media (max-width: 900px) {
-    .main { margin-left: 0; }
-    .page-wrap { padding: 18px; }
-    .topbar { flex-direction: column; align-items: flex-start; }
-    .title { font-size: 24px; }
-    .hero { padding: 18px; }
-    .hero-stats { width: 100%; }
-}
-
-/* Mobile specific adjustments for buttons */
-@media (max-width: 480px) {
-    .actions { grid-template-columns: 1fr; } /* Stack buttons vertically */
+.btn-simpan {
+    padding: 9px 20px;
+    border: none;
+    border-radius: 10px;
+    background: var(--info);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
 }
 </style>
 @endpush
 
 @section('content')
-
-<div class="app">
-    @include('partials.sidebar')
-    <div class="container">
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-            <h1>Jadwal Hari Ini: {{ $dayName }}, {{ \Carbon\Carbon::parse($today)->format('d M Y') }}</h1>
-            <div>
-                <a href="{{ route('attendance.history') }}" class="btn btn-outline-primary" style="margin-right:8px;">Riwayat Absensi</a>
-                <a href="{{ Route::has('schedule.index') ? route('schedule.index') : url('/jadwal') }}" class="btn btn-outline-info">Jadwal Pelajaran</a>
+<div class="page-wrap">
+    <div class="topbar-box">
+        <div>
+            <h1 class="title">Absen Mapel Hari Ini</h1>
+            <div class="subtitle">{{ $dayName }}, {{ \Carbon\Carbon::parse($today)->translatedFormat('d F Y') }} · Kelas <strong>{{ $student->class_id }}</strong> · NIS {{ $student->nis }}</div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+            <a href="{{ route('attendance.history') }}" class="btn btn-sm btn-outline-primary" style="border-radius: 999px; font-weight:700;">
+                <i class="fas fa-history me-1"></i> Riwayat Absensi
+            </a>
+            <a href="{{ Route::has('schedule.index') ? route('schedule.index') : url('/jadwal') }}" class="btn btn-sm btn-outline-secondary" style="border-radius: 999px; font-weight:700;">
+                <i class="fas fa-calendar-alt me-1"></i> Jadwal Pelajaran
+            </a>
+            <div class="chip">
+                <i class="fas fa-user-graduate" style="color: var(--brand);"></i>
+                {{ $student->name }}
             </div>
         </div>
+    </div>
 
-    <main class="main">
-        <div class="page-wrap">
-            <div class="topbar">
-                <div>
-                    <div class="title">Absen Mapel</div>
-                    <div class="subtitle">{{ $dayName }}, {{ \Carbon\Carbon::parse($today)->format('d M Y') }} · Kelas {{ $student->class_id }} · NIS {{ $student->nis }}</div>
-                </div>
-                <div class="chip">
-                    <i class="fas fa-user-graduate" style="color: var(--brand);"></i>
-                    {{ $student->name }}
-                </div>
-            </div>
+    @if(session('success'))
+        <div class="alert alert-success d-flex align-items-center mb-3" style="border-radius: 14px;">
+            <i class="fas fa-check-circle me-2 fs-5"></i>
+            <div>{{ session('success') }}</div>
+        </div>
+    @endif
+    @if(session('error'))
+        <div class="alert alert-danger d-flex align-items-center mb-3" style="border-radius: 14px;">
+            <i class="fas fa-exclamation-circle me-2 fs-5"></i>
+            <div>{{ session('error') }}</div>
+        </div>
+    @endif
+    @if($errors->any())
+        <div class="alert alert-danger mb-3" style="border-radius: 14px;">
+            <ul class="mb-0 ps-3">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
-        @if(session('success'))
-            <div class="alert alert-success" id="feedback-success">{{ session('success') }}</div>
-        @endif
-        @if(session('error'))
-            <div class="alert alert-danger" id="feedback-error">{{ session('error') }}</div>
-        @endif
-        @if($errors->any())
-            <div class="alert alert-danger" id="feedback-errors">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
+    @php
+        $totalSchedules = $schedules->count();
+        $sudahAbsen = $attendances->count();
+        $belumAbsen = max($totalSchedules - $sudahAbsen, 0);
+    @endphp
 
-            @php
-                $submittedCount = $schedules->count() - $notSubmittedCount;
-            @endphp
+    <section class="hero">
+        <div>
+            <h2>Presensi Harian Per Sesi</h2>
+            <p>Klik salah satu status (Hadir, Sakit, Izin, atau Alpha) pada mapel yang dijadwalkan hari ini.</p>
+        </div>
+        <div class="hero-stats">
+            <div class="stat"><strong>{{ $totalSchedules }}</strong><span>Total Sesi</span></div>
+            <div class="stat"><strong>{{ $sudahAbsen }}</strong><span>Sudah Absen</span></div>
+            <div class="stat"><strong>{{ $belumAbsen }}</strong><span>Belum Absen</span></div>
+        </div>
+    </section>
+
     @if($schedules->isEmpty())
-        <p>Tidak ada jadwal untuk hari ini.</p>
-    @else
-        @foreach($schedules as $schedule)
-            <div class="card mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">{{ $schedule->subject->name }}</h5>
-                    <p class="card-text">Guru: {{ $schedule->teacher->name }}</p>
-                    <p class="card-text">Waktu: {{ \Carbon\Carbon::parse($schedule->start_time)->format('H:i') }} - {{ \Carbon\Carbon::parse($schedule->end_time)->format('H:i') }}</p>
-
-            <section class="hero">
-                <div>
-                    <h2>Kehadiran Harian Per Mapel</h2>
-                    <p>Pilih status hadir, sakit, izin, atau alpha untuk setiap sesi pelajaran hari ini.</p>
-                </div>
-                <div class="hero-stats">
-                    <div class="stat"><strong>{{ $schedules->count() }}</strong><span>Total Sesi</span></div>
-                    <div class="stat"><strong>{{ $submittedCount }}</strong><span>Sudah Absen</span></div>
-                    <div class="stat"><strong>{{ $notSubmittedCount }}</strong><span>Belum Absen</span></div>
-                </div>
-            </section>
-
-                    @php
-                        // Memeriksa apakah absensi untuk jadwal ini sudah ada untuk hari ini
-                        $attendance = $attendances->get($schedule->id);
-                        $isSubmitted = (bool) $attendance;
-                        $isDisabled = $isSubmitted; // Jika ada record absensi, tombol akan dinonaktifkan
-                        $statusMessage = '';
-                        $statusClass = '';
-                        if ($isSubmitted) {
-                            if ($attendance->verification_status === 'verified') {
-                                $statusMessage = 'Sudah Absen (Terverifikasi)';
-                                $statusClass = 'text-success';
-                            } elseif ($attendance->verification_status === 'rejected') {
-                                $statusMessage = 'Absensi Ditolak: ' . ($attendance->verification_note ?: 'Silakan hubungi admin.');
-                                $statusClass = 'text-danger';
-                            } else { // status 'pending'
-                                $statusMessage = 'Sudah Absen (Menunggu Verifikasi)';
-                                $statusClass = 'text-warning';
-                            }
-                        }
-                    @endphp
-
-            @if($schedules->isEmpty())
-                <div class="empty-state">
-                    <i class="fas fa-calendar-times"></i>
-                    <div style="font-size: 18px; font-weight: 800; margin-bottom: 6px;">Tidak ada jadwal hari ini</div>
-                    <div>Belum ada mapel untuk kelas <strong>{{ $student->class_id }}</strong> pada hari <strong>{{ $dayName }}</strong>.</div>
-                    <a href="{{ route('schedule.generate') }}"><i class="fas fa-magic"></i> Buat Jadwal Mingguan</a>
-                </div>
-            @else
-                <div class="grid">
-                    @foreach($schedules as $schedule)
-                        @php
-                            $attendance = $attendances->get($schedule->id);
-                            $status = $attendance?->status;
-                            $teacherName = $schedule->teacher?->name
-                                ?? $schedule->subject->teacher
-                                ?? 'Guru belum diset';
-                        @endphp
-
-                        <article class="card">
-                            <header class="card-head">
-                                <div>
-                                    <h3 class="subject-name">{{ $schedule->subject->name ?? '-' }}</h3>
-                                    <div class="subject-code">{{ $schedule->subject->code ?? '-' }}</div>
-                                </div>
-                                <span class="status-badge {{ $status ? 'status-' . $status : 'status-empty' }}">
-                                    @if($status === 'hadir') ✓ Hadir
-                                    @elseif($status === 'sakit') Sakit
-                                    @elseif($status === 'izin') Izin
-                                    @elseif($status === 'alpha') Alpha
-                                    @else Belum Absen
-                                    @endif
-                                </span>
-                            </header>
-                            <div class="card-body">
-                                <div class="info-list">
-                                    <div class="info-row"><div class="icon"><i class="fas fa-clock"></i></div><div>{{ $schedule->start_time->format('H:i') }} - {{ $schedule->end_time->format('H:i') }}</div></div>
-                                    <div class="info-row"><div class="icon"><i class="fas fa-user-tie"></i></div><div>{{ $teacherName }}</div></div>
-                                    <div class="info-row"><div class="icon"><i class="fas fa-school"></i></div><div>Ruang {{ $schedule->room ?? '-' }}</div></div>
-                                </div>
-
-                                @if($attendance)
-                                    <div class="current-note">
-                                        @if($attendance->comment)
-                                            Catatan terakhir: {{ \Illuminate\Support\Str::limit($attendance->comment, 110) }}
-                                        @else
-                                            Status sudah direkam untuk mapel ini.
-                                        @endif
-                                        <br>
-                                        <strong>Status hari ini:</strong> {{ ucfirst($attendance->status) }}
-                                        @if($attendance->status === 'alpha')
-                                            <br><span style="color: #991b1b;">Absensi otomatis karena tidak diisi pada hari jadwal.</span>
-                                        @endif
-                                        @if($attendance->verification_status === 'rejected')
-                                            <br><span style="color: #991b1b; font-weight: 700;">Absensi ditolak admin/guru.</span>
-                                            @if($attendance->verification_note)
-                                                <br><span style="color: #7f1d1d;">{{ $attendance->verification_note }}</span>
-                                            @endif
-                                        @elseif($attendance->verification_status === 'verified')
-                                            <br><span style="color: #065f46; font-weight: 700;">Absensi sudah diverifikasi.</span>
-                                        @endif
-                                        <br>
-                                        <form action="{{ route('attendance.undo', $attendance->id) }}" method="POST" style="display:inline;">
-                                            @csrf
-                                            <button type="submit" class="btn btn-warning btn-sm" style="margin-top:8px;">Undo / Ajukan Perubahan</button>
-                                        </form>
-                                    </div>
-                                @else
-                                    <div class="actions">
-                                        <button type="button" class="btn-status btn-hadir" onclick="openModal({{ $schedule->id }}, 'hadir', @json($schedule->subject->name ?? '-'), '{{ $schedule->start_time }}', '{{ $schedule->end_time }}', '{{ $teacherName }}', '{{ $schedule->room ?? '-' }}')">Hadir</button>
-                                        <button type="button" class="btn-status btn-sakit" onclick="openModal({{ $schedule->id }}, 'sakit', @json($schedule->subject->name ?? '-'), '{{ $schedule->start_time }}', '{{ $schedule->end_time }}', '{{ $teacherName }}', '{{ $schedule->room ?? '-' }}')">Sakit</button>
-                                        <button type="button" class="btn-status btn-izin" onclick="openModal({{ $schedule->id }}, 'izin', @json($schedule->subject->name ?? '-'), '{{ $schedule->start_time }}', '{{ $schedule->end_time }}', '{{ $teacherName }}', '{{ $schedule->room ?? '-' }}')">Izin</button>
-                                        <button type="button" class="btn-status btn-alpha" onclick="openModal({{ $schedule->id }}, 'alpha', @json($schedule->subject->name ?? '-'), '{{ $schedule->start_time }}', '{{ $schedule->end_time }}', '{{ $teacherName }}', '{{ $schedule->room ?? '-' }}')">Alpha</button>
-                                    </div>
-                                @endif
-                    {{-- Bagian form absen manual dihapus, hanya tampil status jika sudah absen --}}
-                    {{-- Sudah di-handle pada blok atas: jika $attendance, tampil status dan info; jika belum, tampil tombol aksi absen --}}
-                    </article>
-                    @endforeach
-                </div>
-            @endif
+        <div class="empty-state">
+            <i class="fas fa-calendar-times mb-2" style="font-size: 36px; color: var(--muted);"></i>
+            <h5 class="fw-bold mb-1">Tidak Ada Jadwal Pelajaran Hari Ini</h5>
+            <p class="text-muted mb-0">Tidak ada jadwal mapel aktif untuk kelas <strong>{{ $student->class_id }}</strong> pada hari <strong>{{ $dayName }}</strong>.</p>
         </div>
-    </main>
+    @else
+        <div class="grid-cards">
+            @foreach($schedules as $schedule)
+                @php
+                    $attendance = $attendances->get($schedule->id);
+                    $status = $attendance?->status;
+                    $teacherName = $schedule->teacher?->name
+                        ?? $schedule->subject?->teacher
+                        ?? 'Guru Belum Diset';
+                    $startTime = \Carbon\Carbon::parse($schedule->start_time)->format('H:i');
+                    $endTime = \Carbon\Carbon::parse($schedule->end_time)->format('H:i');
+                    $roomName = $schedule->room ?: 'Kelas ' . $student->class_id;
+                    $mapelName = $schedule->subject?->name ?? 'Mata Pelajaran';
+                    $mapelCode = $schedule->subject?->code ?? '-';
+                @endphp
+
+                <div class="card-schedule">
+                    <div class="card-head">
+                        <div>
+                            <div class="subject-name">{{ $mapelName }}</div>
+                            <div class="subject-code">{{ $mapelCode }}</div>
+                        </div>
+                        <span class="status-badge {{ $status ? 'status-' . $status : 'status-empty' }}">
+                            @if($status === 'hadir') <i class="fas fa-check-circle"></i> Hadir
+                            @elseif($status === 'sakit') <i class="fas fa-thermometer-half"></i> Sakit
+                            @elseif($status === 'izin') <i class="fas fa-envelope-open-text"></i> Izin
+                            @elseif($status === 'alpha') <i class="fas fa-times-circle"></i> Alpha
+                            @else <i class="fas fa-clock"></i> Belum Absen
+                            @endif
+                        </span>
+                    </div>
+
+                    <div class="card-body-content">
+                        <div class="info-list">
+                            <div class="info-row">
+                                <div class="info-icon"><i class="fas fa-clock"></i></div>
+                                <div><strong>{{ $startTime }} - {{ $endTime }} WIB</strong></div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-icon"><i class="fas fa-user-tie"></i></div>
+                                <div>{{ $teacherName }}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-icon"><i class="fas fa-location-dot"></i></div>
+                                <div>Ruang: {{ $roomName }}</div>
+                            </div>
+                        </div>
+
+                        @if($attendance)
+                            <div class="attendance-done">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span class="text-muted">Status Presensi:</span>
+                                    <strong class="text-capitalize text-{{ $status === 'hadir' ? 'success' : ($status === 'alpha' ? 'danger' : 'warning') }}">
+                                        {{ $status }}
+                                    </strong>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="text-muted">Verifikasi Guru:</span>
+                                    @if($attendance->verification_status === 'verified')
+                                        <span class="badge bg-success">Terverifikasi</span>
+                                    @elseif($attendance->verification_status === 'rejected')
+                                        <span class="badge bg-danger">Ditolak</span>
+                                    @else
+                                        <span class="badge bg-warning text-dark">Menunggu Verifikasi</span>
+                                    @endif
+                                </div>
+                                @if($attendance->comment)
+                                    <div class="text-muted small mb-2">Keterangan: {{ $attendance->comment }}</div>
+                                @endif
+
+                                @if(!in_array((string)$attendance->verification_status, ['verified', 'rejected'], true))
+                                    <form action="{{ route('attendance.undo', $attendance->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan absensi ini untuk mengisi ulang?');">
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm btn-outline-warning w-100 fw-bold">
+                                            <i class="fas fa-rotate-left me-1"></i> Ajukan Perubahan (Undo)
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
+                        @else
+                            <div class="actions-grid">
+                                <button type="button" class="btn-status btn-hadir" data-schedule-id="{{ $schedule->id }}" data-status="hadir" data-mapel="{{ $mapelName }}" data-time="{{ $startTime }} - {{ $endTime }}" data-teacher="{{ $teacherName }}" data-room="{{ $roomName }}">
+                                    ✓ Hadir
+                                </button>
+                                <button type="button" class="btn-status btn-sakit" data-schedule-id="{{ $schedule->id }}" data-status="sakit" data-mapel="{{ $mapelName }}" data-time="{{ $startTime }} - {{ $endTime }}" data-teacher="{{ $teacherName }}" data-room="{{ $roomName }}">
+                                    🤒 Sakit
+                                </button>
+                                <button type="button" class="btn-status btn-izin" data-schedule-id="{{ $schedule->id }}" data-status="izin" data-mapel="{{ $mapelName }}" data-time="{{ $startTime }} - {{ $endTime }}" data-teacher="{{ $teacherName }}" data-room="{{ $roomName }}">
+                                    📝 Izin
+                                </button>
+                                <button type="button" class="btn-status btn-alpha" data-schedule-id="{{ $schedule->id }}" data-status="alpha" data-mapel="{{ $mapelName }}" data-time="{{ $startTime }} - {{ $endTime }}" data-teacher="{{ $teacherName }}" data-room="{{ $roomName }}">
+                                    ✕ Alpha
+                                </button>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            @endforeach
+        </div>
+    @endif
 </div>
 
-<div id="attendanceModal" class="modal">
-    <div class="modal-box">
-        <div class="modal-head">
-            <h4 class="modal-title">Konfirmasi Absensi</h4>
-            <button type="button" class="modal-close" onclick="closeModal()">&times;</button>
+<!-- Modal Konfirmasi Absensi (Diletakkan sekali di luar loop) -->
+<div id="attendanceModal" class="modal-custom" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-card">
+        <div class="modal-header-box">
+            <h5 class="modal-title-text" id="modalTitle">Konfirmasi Absensi Mapel</h5>
+            <button type="button" class="modal-close-btn" id="btnModalClose" aria-label="Tutup">&times;</button>
         </div>
 
-        <form id="attendanceForm" method="POST" action="{{ route('absensi.store') }}" enctype="multipart/form-data" onsubmit="return validateAttendanceTime();">
+        <form id="attendanceForm" method="POST" action="{{ route('absensi.store') }}" enctype="multipart/form-data">
             @csrf
-            <div class="modal-body">
-                <div class="group">
-                    <label class="label">Mata Pelajaran</label>
-                    <input id="mapelName" type="text" class="control" readonly>
+            <input type="hidden" id="scheduleId" name="schedule_id">
+            <input type="hidden" id="statusValue" name="status">
+
+            <div class="modal-body-box">
+                <div class="modal-group">
+                    <label class="modal-label">Mata Pelajaran</label>
+                    <input type="text" id="mapelName" class="modal-input" readonly>
                 </div>
-                <div class="group">
-                    <label class="label">Guru</label>
-                    <input id="teacherName" type="text" class="control" readonly>
+                <div class="row g-2 mb-2">
+                    <div class="col-6">
+                        <label class="modal-label">Guru Pengajar</label>
+                        <input type="text" id="teacherName" class="modal-input" readonly>
+                    </div>
+                    <div class="col-6">
+                        <label class="modal-label">Waktu Sesi</label>
+                        <input type="text" id="scheduleTime" class="modal-input" readonly>
+                    </div>
                 </div>
-                <div class="group">
-                    <label class="label">Jam</label>
-                    <input id="scheduleTime" type="text" class="control" readonly>
+                <div class="modal-group">
+                    <label class="modal-label">Status Presensi Dipilih</label>
+                    <input type="text" id="statusDisplay" class="modal-input fw-bold" readonly>
                 </div>
-                <div class="group">
-                    <label class="label">Ruang</label>
-                    <input id="roomName" type="text" class="control" readonly>
+                <div class="modal-group">
+                    <label class="modal-label">Keterangan (Opsional)</label>
+                    <textarea name="keterangan" id="keteranganInput" class="modal-input" rows="3" placeholder="Tuliskan keterangan jika sakit/izin atau catatan tambahan..."></textarea>
                 </div>
-                <input id="scheduleId" name="schedule_id" type="hidden">
-                <div class="group">
-                    <label class="label">Status</label>
-                    <input id="statusValue" name="status" type="hidden">
-                    <input id="statusDisplay" type="text" class="control" readonly>
+                <div class="modal-group" id="proofGroup" style="display:none;">
+                    <label class="modal-label text-danger">Upload Surat / Bukti (Format: JPG, PNG, PDF max 2MB)</label>
+                    <input type="file" name="proof" id="proofInput" class="modal-input" accept="image/jpeg,image/png,application/pdf">
                 </div>
-                <div class="group">
-                    <label class="label">Keterangan (Opsional)</label>
-                    <textarea name="keterangan" class="control" rows="4" placeholder="Tambahkan keterangan jika perlu..."></textarea>
-                </div>
-                <div class="group" id="proofGroup" style="display:none;">
-                    <label class="label">Upload Bukti (khusus Sakit/Izin)</label>
-                    <input type="file" name="proof" id="proofInput" class="control" accept="image/*,application/pdf">
-                </div>
-                <div id="loadingIndicator" style="display:none;text-align:center;margin:10px 0;">
-                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Mengirim absensi...
-                </div>
-                <div id="feedbackArea"></div>
             </div>
-            <div class="modal-foot">
-                <button type="button" class="btn-modal btn-secondary" onclick="closeModal()">Batal</button>
-                <button type="submit" class="btn-modal btn-primary" id="submitBtn">Simpan</button>
+
+            <div class="modal-footer-box">
+                <button type="button" class="btn-batal" id="btnModalBatal">Batal</button>
+                <button type="submit" class="btn-simpan" id="submitBtn">Kirim Presensi</button>
             </div>
         </form>
     </div>
-        @endforeach
-    @endif
 </div>
-@endsection
 
-@push('scripts')
 <script>
-// Reminder jika ada sesi belum absen
-window.addEventListener('DOMContentLoaded', function() {
-    const notSubmitted = {{ $notSubmittedCount ?? 0 }};
-    if (notSubmitted > 0) {
-        setTimeout(() => {
-            alert('Ada ' + notSubmitted + ' sesi yang belum diabsen hari ini!');
-        }, 1200);
+(function() {
+    function initAttendance() {
+        const modal = document.getElementById('attendanceModal');
+        const form = document.getElementById('attendanceForm');
+        const scheduleIdInput = document.getElementById('scheduleId');
+        const statusValueInput = document.getElementById('statusValue');
+        const statusDisplayInput = document.getElementById('statusDisplay');
+        const mapelNameInput = document.getElementById('mapelName');
+        const teacherNameInput = document.getElementById('teacherName');
+        const scheduleTimeInput = document.getElementById('scheduleTime');
+        const proofGroup = document.getElementById('proofGroup');
+        const keteranganInput = document.getElementById('keteranganInput');
+        const btnClose = document.getElementById('btnModalClose');
+        const btnBatal = document.getElementById('btnModalBatal');
+
+        if (!modal) return;
+
+        function openModal(scheduleId, status, mapel, time, teacher, room) {
+            scheduleIdInput.value = scheduleId;
+            statusValueInput.value = status;
+            
+            const labels = {
+                hadir: '✓ Hadir',
+                sakit: '🤒 Sakit',
+                izin: '📝 Izin',
+                alpha: '✕ Alpha'
+            };
+            statusDisplayInput.value = labels[status] || status;
+            mapelNameInput.value = mapel;
+            teacherNameInput.value = teacher;
+            scheduleTimeInput.value = time + ' (' + room + ')';
+            keteranganInput.value = '';
+
+            if (status === 'sakit' || status === 'izin') {
+                proofGroup.style.display = 'block';
+            } else {
+                proofGroup.style.display = 'none';
+            }
+
+            modal.classList.add('is-open');
+        }
+
+        function closeModal() {
+            modal.classList.remove('is-open');
+        }
+
+        document.querySelectorAll('.btn-status').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const id = this.getAttribute('data-schedule-id');
+                const st = this.getAttribute('data-status');
+                const mp = this.getAttribute('data-mapel');
+                const tm = this.getAttribute('data-time');
+                const tc = this.getAttribute('data-teacher');
+                const rm = this.getAttribute('data-room');
+                openModal(id, st, mp, tm, tc, rm);
+            });
+        });
+
+        if (btnClose) btnClose.addEventListener('click', closeModal);
+        if (btnBatal) btnBatal.addEventListener('click', closeModal);
+
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) closeModal();
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modal.classList.contains('is-open')) {
+                closeModal();
+            }
+        });
+
+        form.addEventListener('submit', function() {
+            const submitBtn = document.getElementById('submitBtn');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerText = 'Menyimpan...';
+            }
+        });
     }
-});
 
-function openModal(scheduleId, status, mapelName, startTime, endTime, teacherName, roomName) {
-    const labels = {
-        hadir: 'Hadir',
-        sakit: '🤒 Sakit',
-        izin: 'Izin',
-        alpha: 'Alpha',
-    };
-    document.getElementById('mapelName').value = mapelName;
-    document.getElementById('scheduleId').value = scheduleId;
-    document.getElementById('statusValue').value = status;
-    document.getElementById('statusDisplay').value = labels[status] || status;
-    document.getElementById('teacherName').value = teacherName;
-    document.getElementById('scheduleTime').value = startTime + ' - ' + endTime;
-    document.getElementById('roomName').value = roomName === '-' ? 'Online' : roomName; // Default to 'Online' if room is '-'
-    // Tampilkan upload bukti jika sakit/izin
-    document.getElementById('proofGroup').style.display = (status === 'sakit' || status === 'izin') ? 'block' : 'none';
-    document.getElementById('attendanceModal').classList.add('show');
-}
-
-function closeModal() {
-    document.getElementById('attendanceModal').classList.remove('show');
-}
-
-// Loading indicator saat submit
-document.getElementById('attendanceForm').addEventListener('submit', function() {
-    document.getElementById('loadingIndicator').style.display = 'block';
-    document.getElementById('submitBtn').disabled = true;
-    document.getElementById('feedbackArea').innerHTML = ''; // Clear previous feedback
-});
-
-// Aksesibilitas: tombol bisa diakses keyboard
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') closeModal();
-});
-
-// Feedback submit dekat tombol
-function showFeedback(msg, isSuccess = true) {
-    const area = document.getElementById('feedbackArea');
-    area.innerHTML = `<div style="color:${isSuccess ? 'green':'red'};font-weight:700;">${msg}</div>`;
-}
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initAttendance);
+    } else {
+        initAttendance();
+    }
+})();
 </script>
-@endpush
+@endsection
