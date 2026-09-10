@@ -25,7 +25,7 @@ class DashboardSiswa extends Component
     public string $mata_pelajaran = '';
     public string $tanggal_ujian = '';
     public bool $showForm = false;
-
+ 
     /** @var \Illuminate\Support\Collection|array */
     public $subjectOptions = [];
 

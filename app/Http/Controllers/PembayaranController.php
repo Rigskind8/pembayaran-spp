@@ -120,18 +120,35 @@ class PembayaranController extends Controller
             'amount'        => 'required|numeric|min:1',
             'month'         => 'required|string',
             'year'          => 'required|numeric|min:2020|max:2099',
+            'due_date'      => 'nullable|date',
         ]);
 
+        $student = Student::find($request->student_id);
+        $originalAmount = $request->amount;
+        $discountAmount = 0;
+        $discountReason = null;
+
+        if ($student && $request->jenis_tagihan === 'SPP' && $student->potongan_spp > 0) {
+            $discountAmount = min($originalAmount, $student->potongan_spp);
+            $discountReason = $student->beasiswa_type ? 'Potongan ' . ucwords(str_replace('_', ' ', $student->beasiswa_type)) : 'Potongan Beasiswa';
+        }
+
+        $finalAmount = max(0, $originalAmount - $discountAmount);
+
         Payment::create([
-            'student_id'    => $request->student_id,
-            'jenis_tagihan' => $request->jenis_tagihan,
-            'keterangan'    => $request->keterangan,
-            'amount'        => $request->amount,
-            'month'         => $request->month,
-            'year'          => $request->year,
-            'type'          => $request->jenis_tagihan === 'SPP' ? 'SPP' : 'Lainnya',
-            'status'        => 'unpaid',
-            'is_tagihan'    => true,
+            'student_id'      => $request->student_id,
+            'jenis_tagihan'   => $request->jenis_tagihan,
+            'keterangan'      => $request->keterangan,
+            'original_amount' => $originalAmount,
+            'discount_amount' => $discountAmount,
+            'discount_reason' => $discountReason,
+            'amount'          => $finalAmount,
+            'month'           => $request->month,
+            'year'            => $request->year,
+            'due_date'        => $request->due_date,
+            'type'            => $request->jenis_tagihan === 'SPP' ? 'SPP' : 'Lainnya',
+            'status'          => 'unpaid',
+            'is_tagihan'      => true,
         ]);
 
         return redirect()->route('admin.payments')
@@ -149,6 +166,7 @@ class PembayaranController extends Controller
             'amount'        => 'required|numeric|min:1',
             'month'         => 'required|string',
             'year'          => 'required|numeric|min:2020|max:2099',
+            'due_date'      => 'nullable|date',
         ]);
 
         $students = Student::all();
@@ -163,16 +181,31 @@ class PembayaranController extends Controller
                 ->exists();
 
             if (!$sudahAda) {
+                $originalAmount = $request->amount;
+                $discountAmount = 0;
+                $discountReason = null;
+
+                if ($request->jenis_tagihan === 'SPP' && $student->potongan_spp > 0) {
+                    $discountAmount = min($originalAmount, $student->potongan_spp);
+                    $discountReason = $student->beasiswa_type ? 'Potongan ' . ucwords(str_replace('_', ' ', $student->beasiswa_type)) : 'Potongan Beasiswa';
+                }
+
+                $finalAmount = max(0, $originalAmount - $discountAmount);
+
                 Payment::create([
-                    'student_id'    => $student->id,
-                    'jenis_tagihan' => $request->jenis_tagihan,
-                    'keterangan'    => $request->keterangan,
-                    'amount'        => $request->amount,
-                    'month'         => $request->month,
-                    'year'          => $request->year,
-                    'type'          => $request->jenis_tagihan === 'SPP' ? 'SPP' : 'Lainnya',
-                    'status'        => 'unpaid',
-                    'is_tagihan'    => true,
+                    'student_id'      => $student->id,
+                    'jenis_tagihan'   => $request->jenis_tagihan,
+                    'keterangan'      => $request->keterangan,
+                    'original_amount' => $originalAmount,
+                    'discount_amount' => $discountAmount,
+                    'discount_reason' => $discountReason,
+                    'amount'          => $finalAmount,
+                    'month'           => $request->month,
+                    'year'            => $request->year,
+                    'due_date'        => $request->due_date,
+                    'type'            => $request->jenis_tagihan === 'SPP' ? 'SPP' : 'Lainnya',
+                    'status'          => 'unpaid',
+                    'is_tagihan'      => true,
                 ]);
                 $jumlah++;
             }
@@ -523,5 +556,89 @@ class PembayaranController extends Controller
         }
 
         return view('payments.pdf', compact('payments', 'student', 'ttd', 'ttdImage', 'namaBendahara', 'namaKepalaSekolah', 'namaSekolah'));
+    }
+
+    /* ===============================
+       EXPORT TUNGGAKAN EXCEL / CSV
+    =============================== */
+    public function exportTunggakanExcel(Request $request)
+    {
+        $kelas = $request->query('class_id');
+        $query = Payment::with('student')
+            ->where(function ($q) {
+                $q->where('is_tagihan', true)
+                  ->orWhereNotNull('jenis_tagihan');
+            })
+            ->whereNotIn('status', ['approved', 'paid']);
+
+        if ($kelas) {
+            $query->whereHas('student', fn($q) => $q->where('class_id', $kelas));
+        }
+
+        $tunggakan = $query->orderBy('student_id')->get();
+        $fileName  = 'laporan_tunggakan_' . ($kelas ? str_replace(' ', '_', $kelas) : 'semua_kelas') . '_' . date('Ymd') . '.csv';
+
+        $headers = [
+            "Content-type"        => "text/csv; charset=UTF-8",
+            "Content-Disposition" => "attachment; filename={$fileName}",
+            "Pragma"              => "no-cache",
+            "Cache-Control"       => "must-revalidate, post-check=0, pre-check=0",
+            "Expires"             => "0"
+        ];
+
+        $callback = function() use ($tunggakan) {
+            $file = fopen('php://output', 'w');
+            fputs($file, "\xEF\xBB\xBF"); // UTF-8 BOM for Excel
+            fputcsv($file, ['No', 'NIS', 'Nama Siswa', 'Kelas', 'Kategori Beasiswa', 'Jenis Tagihan', 'Bulan/Tahun', 'Potongan (Rp)', 'Denda (Rp)', 'Total Tagihan (Rp)', 'Status']);
+
+            foreach ($tunggakan as $index => $item) {
+                fputcsv($file, [
+                    $index + 1,
+                    $item->student->nis ?? '-',
+                    $item->student->name ?? '-',
+                    $item->student->class_id ?? '-',
+                    ucwords(str_replace('_', ' ', $item->student->beasiswa_type ?? 'reguler')),
+                    $item->jenis_tagihan ?? $item->type ?? 'SPP',
+                    ($item->month ? $item->month . ' ' : '') . $item->year,
+                    $item->discount_amount ?? 0,
+                    $item->penalty_amount ?? 0,
+                    $item->amount,
+                    ucfirst($item->status),
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    /* ===============================
+       EXPORT TUNGGAKAN PDF
+    =============================== */
+    public function exportTunggakanPdf(Request $request)
+    {
+        $kelas = $request->query('class_id');
+        $query = Payment::with('student')
+            ->where(function ($q) {
+                $q->where('is_tagihan', true)
+                  ->orWhereNotNull('jenis_tagihan');
+            })
+            ->whereNotIn('status', ['approved', 'paid']);
+
+        if ($kelas) {
+            $query->whereHas('student', fn($q) => $q->where('class_id', $kelas));
+        }
+
+        $tunggakan = $query->orderBy('student_id')->get();
+        $totalTunggakan = $tunggakan->sum('amount');
+        $namaSekolah = \App\Models\Setting::get('nama_sekolah', 'SMK Travina Prima');
+
+        $html = view('payments.tunggakan-pdf', compact('tunggakan', 'totalTunggakan', 'kelas', 'namaSekolah'))->render();
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadHTML($html)
+            ->setPaper('a4', 'landscape');
+
+        return $pdf->download('laporan-tunggakan-' . ($kelas ? str_replace(' ', '_', $kelas) : 'semua-kelas') . '.pdf');
     }
 }

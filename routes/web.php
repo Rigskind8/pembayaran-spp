@@ -19,6 +19,7 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\StudentAttendanceController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TeacherAttendanceController;
+use App\Http\Controllers\SuratController;
 use App\Livewire\Guru\HasilUjian;
 use App\Http\Controllers\UjianController;
 use App\Http\Controllers\UserController;
@@ -147,6 +148,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::post('notifications/mark-read', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.markRead');
 
     // WA Redirect (available for all authenticated roles)
     Route::get('/admin/wa', function () {
@@ -252,6 +254,8 @@ Route::middleware('auth')->group(function () {
 
         // Student Attendance Management
         Route::get('kelola-absensi-siswa', [StudentAttendanceController::class, 'manageAttendance'])->name('attendance.manage');
+        Route::get('absensi/scan-qr', [StudentAttendanceController::class, 'scanQrView'])->name('attendance.scanQr');
+        Route::post('absensi/scan-qr', [StudentAttendanceController::class, 'processQrScan'])->name('attendance.processQrScan');
         Route::patch('kelola-absensi-siswa/{attendance}', [StudentAttendanceController::class, 'updateAttendance'])->name('attendance.update');
         Route::get('absensi-json/{schedule}', [StudentAttendanceController::class, 'getAttendanceJson'])->name('attendance.json');
         Route::get('kelola-absensi-siswa/{attendance}', fn() => redirect()->route('attendance.manage'));
@@ -292,6 +296,7 @@ Route::middleware('auth')->group(function () {
         Route::get('admin/profile/edit', [AdminProfileController::class, 'edit'])->name('admin.profile.edit');
         Route::post('admin/profile/edit', [AdminProfileController::class, 'update'])->name('admin.profile.update');
         Route::post('admin/profile/photo', [AdminProfileController::class, 'updatePhoto'])->name('admin.profile.photo');
+        Route::get('admin/activity-logs', [\App\Http\Controllers\ActivityLogController::class, 'index'])->name('admin.activity-logs');
 
         // Monitor Absensi Guru
         Route::get('monitor-absensi-guru', [TeacherAttendanceController::class, 'monitor'])->name('teacher.attendance.monitor');
@@ -339,6 +344,10 @@ Route::middleware('auth')->group(function () {
         Route::patch('manage-schedule/{schedule}', [ScheduleController::class, 'update'])->name('schedule.update');
         Route::delete('manage-schedule/{schedule}', [ScheduleController::class, 'destroy'])->name('schedule.destroy');
         Route::get('manage-schedule/{schedule}', fn() => redirect()->route('schedule.manage'));
+
+        // Surat masuk dan surat keluar
+        Route::resource('surat', SuratController::class);
+        Route::post('surat/{surat}/disposisi', [SuratController::class, 'storeDisposition'])->name('surat.disposisi.store');
     });
 
     /*
@@ -351,6 +360,8 @@ Route::middleware('auth')->group(function () {
         // Keuangan / Pembayaran
         Route::get('manage-payments', [PembayaranController::class, 'adminIndex'])->name('admin.payments');
         Route::get('payments/report', [PembayaranController::class, 'report'])->name('payments.report');
+        Route::get('payments/export/tunggakan-excel', [PembayaranController::class, 'exportTunggakanExcel'])->name('payments.exportTunggakanExcel');
+        Route::get('payments/export/tunggakan-pdf', [PembayaranController::class, 'exportTunggakanPdf'])->name('payments.exportTunggakanPdf');
         Route::post('payments/bulk-approve', [PembayaranController::class, 'bulkApprove'])->name('payments.bulkApprove');
         Route::patch('payments/{payment}/verify', [PembayaranController::class, 'verify'])->name('payments.verify');
         Route::patch('payments/{payment}/reject', [PembayaranController::class, 'reject'])->name('payments.reject');

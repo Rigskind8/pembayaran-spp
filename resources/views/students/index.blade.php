@@ -115,7 +115,9 @@ table.dt td{padding:13px 18px;font-size:13px;vertical-align:middle;}
                             <th>NIS</th>
                             <th>Email</th>
                             <th>Kelas</th>
+                            <th>Tahun Ajaran</th>
                             <th>Jenis Kelamin</th>
+                            <th>Beasiswa / Diskon</th>
                             <th style="padding-right:22px;">Aksi</th>
                         </tr>
                     </thead>
@@ -140,8 +142,23 @@ table.dt td{padding:13px 18px;font-size:13px;vertical-align:middle;}
                                     {{ $s->class_id ?? $s->kelas ?? '-' }}
                                 </span>
                             </td>
+                            <td style="color:var(--txt2);font-weight:600;">{{ $s->tahun_ajaran ?? '-' }}</td>
                             <td style="color:var(--txt2);font-weight:600;">
                                 {{ $s->gender === 'L' ? 'Laki-laki' : ($s->gender === 'P' ? 'Perempuan' : '-') }}
+                            </td>
+                            <td>
+                                @if($s->beasiswa_type && $s->beasiswa_type !== 'reguler')
+                                    <span style="background:#fef3c7;color:#92400e;padding:4px 8px;border-radius:6px;font-size:11px;font-weight:700;display:inline-block;">
+                                        🎓 {{ ucwords(str_replace('_', ' ', $s->beasiswa_type)) }}
+                                    </span>
+                                    @if($s->potongan_spp > 0)
+                                        <div style="font-size:10px;color:#059669;font-weight:700;margin-top:2px;">
+                                            -Rp {{ number_format($s->potongan_spp, 0, ',', '.') }}/bln
+                                        </div>
+                                    @endif
+                                @else
+                                    <span style="color:var(--txt3);font-size:11px;">Reguler</span>
+                                @endif
                             </td>
                             <td style="padding-right:22px;">
                                 <div style="display:flex;gap:6px;">
@@ -159,7 +176,7 @@ table.dt td{padding:13px 18px;font-size:13px;vertical-align:middle;}
                             </td>
                         </tr>
                         @empty
-                        <tr><td colspan="7">
+                        <tr><td colspan="8">
                             <div class="empty-state">
                                 <div style="font-size:2.5rem;">👥</div>
                                 <p style="font-size:13px;font-weight:600;color:var(--txt2);margin-top:8px;">Belum ada data siswa.</p>

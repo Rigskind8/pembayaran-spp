@@ -488,9 +488,7 @@
             </p>
         </div>
         <div class="ks-topbar-right">
-
-                <i class="fas fa-bars"></i>
-            </button>
+            @include('partials.topbar-notifications')
         </div>
     </div>
 
@@ -567,6 +565,44 @@
             <!-- Left Column -->
             <div class="ks-col">
 
+                <!-- Grafik Pemasukan SPP Bulanan -->
+                <div class="ks-card">
+                    <div class="ks-card-head">
+                        <h3 class="ks-card-title">
+                            <span class="ico" style="background: var(--ks-amber-lt); color: var(--ks-amber);">
+                                <i class="fas fa-chart-line"></i>
+                            </span>
+                            Grafik Pemasukan SPP (6 Bulan Terakhir)
+                        </h3>
+                    </div>
+                    <div class="ks-card-body">
+                        <canvas id="revenueChart" style="max-height: 250px; width: 100%;"></canvas>
+                    </div>
+                </div>
+
+                <!-- Export Laporan Tunggakan -->
+                <div class="ks-card">
+                    <div class="ks-card-head">
+                        <h3 class="ks-card-title">
+                            <span class="ico" style="background: var(--ks-red-lt); color: var(--ks-red);">
+                                <i class="fas fa-file-export"></i>
+                            </span>
+                            Export Laporan Tunggakan Siswa
+                        </h3>
+                    </div>
+                    <div class="ks-card-body">
+                        <p style="font-size:12.5px;color:var(--ks-muted);margin-bottom:16px;">Unduh rekapitulasi data tunggakan SPP siswa per kelas dalam format Excel / PDF.</p>
+                        <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                            <a href="{{ route('payments.exportTunggakanExcel') }}" class="ks-card-link" style="background:#ecfdf5;color:#059669;padding:10px 18px;">
+                                <i class="fas fa-file-excel"></i> Export Excel (.xlsx / CSV)
+                            </a>
+                            <a href="{{ route('payments.exportTunggakanPdf') }}" class="ks-card-link" style="background:#fef2f2;color:#dc2626;padding:10px 18px;">
+                                <i class="fas fa-file-pdf"></i> Export PDF
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Transaksi Pembayaran -->
                 <div class="ks-card">
                     <div class="ks-card-head">
@@ -576,8 +612,8 @@
                             </span>
                             Transaksi Pembayaran SPP Terbaru
                         </h3>
-                        @if(Route::has('payments.index'))
-                            <a href="{{ route('payments.index') }}" class="ks-card-link">
+                        @if(Route::has('admin.payments'))
+                            <a href="{{ route('admin.payments') }}" class="ks-card-link">
                                 Selengkapnya <i class="fas fa-arrow-right"></i>
                             </a>
                         @endif
@@ -670,6 +706,7 @@
 @endsection
 
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 function updateClock() {
     const el = document.getElementById('liveClock');
@@ -677,5 +714,49 @@ function updateClock() {
 }
 setInterval(updateClock, 1000);
 updateClock();
+
+document.addEventListener("DOMContentLoaded", function () {
+    const ctx = document.getElementById('revenueChart');
+    if (!ctx) return;
+
+    const trendData = @json($revenueTrend ?? []);
+    const labels = trendData.map(item => item.label);
+    const totals = trendData.map(item => item.total);
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Pemasukan SPP (Rp)',
+                data: totals,
+                borderColor: '#2563eb',
+                backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.3,
+                pointBackgroundColor: '#2563eb',
+                pointRadius: 5
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return 'Rp ' + value.toLocaleString('id-ID');
+                        }
+                    }
+                }
+            }
+        }
+    });
+});
 </script>
 @endpush

@@ -227,7 +227,11 @@ class DashboardController extends Controller
         $totalNilaiUAS = Nilai::where('type', 'uas')->whereIn('subject_id', $subjectIds)->whereIn('student_id', $studentIds)->count();
 
         try {
-            $announcements = \App\Models\Pengumuman::with('user')->latest()->take(5)->get();
+            $announcements = \App\Models\Pengumuman::with('user')
+                ->orderByDesc('is_pinned')
+                ->latest()
+                ->take(5)
+                ->get();
         } catch (\Throwable $e) {
             $announcements = collect();
         }
@@ -401,7 +405,11 @@ class DashboardController extends Controller
         }
 
         try {
-            $announcements = \App\Models\Pengumuman::with('user')->latest()->take(5)->get();
+            $announcements = \App\Models\Pengumuman::with('user')
+                ->orderByDesc('is_pinned')
+                ->latest()
+                ->take(5)
+                ->get();
         } catch (\Throwable $e) {
             $announcements = collect();
         }

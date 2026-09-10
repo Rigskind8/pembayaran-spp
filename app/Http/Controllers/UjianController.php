@@ -209,12 +209,6 @@ class UjianController extends Controller
         }
 
         $payment = $this->verifiedExamPayment($jenis, $subject->id);
-        if (!$payment) {
-            return redirect()
-                ->route('ujian.' . $jenis)
-                ->with('error', 'Pembayaran ' . strtoupper($jenis) . ' untuk mapel ini belum verified.');
-        }
-
         $questions = ExamQuestion::active()
             ->with('subject')
             ->where('type', $jenis)
@@ -287,12 +281,6 @@ class UjianController extends Controller
         }
 
         $payment = $this->verifiedExamPayment($jenis, $subject->id);
-        if (!$payment) {
-            return redirect()
-                ->route('ujian.' . $jenis)
-                ->with('error', 'Pembayaran ' . strtoupper($jenis) . ' untuk mapel ini belum verified.');
-        }
-
         $questions = ExamQuestion::active()
             ->where('type', $jenis)
             ->where('subject_id', $subject->id)
@@ -520,7 +508,7 @@ class UjianController extends Controller
                 'latestAttempt' => $latestAttempt,
                 'isDone'        => (bool) $latestAttempt,
                 'questionCount' => $questionCount,
-                'canTake'       => !$latestAttempt && $payment?->status === 'verified' && $questionCount >= self::EXAM_QUESTION_LIMIT,
+                'canTake'       => !$latestAttempt && $questionCount >= self::EXAM_QUESTION_LIMIT,
             ];
         })->values();
 

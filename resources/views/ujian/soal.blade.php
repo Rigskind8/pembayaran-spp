@@ -59,7 +59,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#f4f6fa;color:#111827
                     <h1>{{ $subject->name }}</h1>
                     <p>{{ $subject->class_id ? 'Kelas ' . $subject->class_id : 'Soal umum' }} · {{ $questions->count() }} pertanyaan</p>
                 </div>
-                <div class="pill"><i class="fas fa-receipt"></i> Pembayaran verified</div>
+                <div class="pill"><i class="fas fa-unlock"></i> Akses ujian dibuka</div>
             </div>
 
             @if(session('success'))
@@ -124,13 +124,12 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#f4f6fa;color:#111827
                     <div class="card-head">
                         <div>
                             <div class="card-title">Ringkasan Ujian</div>
-                            <div class="card-sub">Status pembayaran dan hasil terbaru</div>
+                            <div class="card-sub">Status akses dan hasil terbaru</div>
                         </div>
                     </div>
                     <div class="summary">
-                        <div class="box"><div class="k">Status Pembayaran</div><div class="v">{{ ucfirst($payment->status) }}</div></div>
-                        <div class="box"><div class="k">Tanggal Bayar</div><div class="v" style="font-size:15px;">{{ $payment->verified_at?->format('d M Y H:i') ?? $payment->created_at->format('d M Y H:i') }}</div></div>
-                        <div class="box"><div class="k">Bukti</div><div class="v" style="font-size:15px;">{{ $payment->bukti ? 'Tersedia' : 'Tidak ada' }}</div></div>
+                        <div class="box"><div class="k">Status Akses</div><div class="v">Dibuka</div></div>
+                        <div class="box"><div class="k">Pembayaran</div><div class="v" style="font-size:15px;">Tidak diperlukan untuk mengikuti ujian</div></div>
 
                         @if($latestAttempt)
                             <div class="result">

@@ -45,19 +45,30 @@ class ScheduleController extends Controller
                 $missingClass     = true;
             } else {
                 $student = Student::findByUser($user);
-                $raw = Schedule::with(['subject', 'teacher', 'absensiHariIni'])
+                $rawSchedules = Schedule::with(['subject', 'teacher'])
                     ->byClass($classId)->active()
                     ->orderBy('day')->orderBy('start_time')
                     ->get();
 
-                $subjects = Subject::active()->where('class_id', $classId)->get();
-                $subjectTeachers = $raw->groupBy('subject_id')->mapWithKeys(function ($group, $subjectId) {
+                // Ambil subject ID unik dari jadwal yang relevan untuk kelas ini
+                $relevantSubjectIds = $rawSchedules->pluck('subject_id')->filter()->unique();
+
+                // Ambil data subject berdasarkan ID yang relevan
+                $subjects = Subject::active()
+                    ->whereIn('id', $relevantSubjectIds)
+                    ->orderBy('name')
+                    ->get();
+
+                // Buat pemetaan antara subject_id dengan nama guru untuk ditampilkan di view
+                $subjectTeachers = $rawSchedules->groupBy('subject_id')->mapWithKeys(function ($group, $subjectId) {
                     $schedule = $group->first();
-                    return [$subjectId => $schedule->teacher?->name ?? $schedule->subject?->teacher ?? '-'];
+                    // Prioritaskan nama dari relasi User (teacher), fallback ke nama text di Subject
+                    $teacherName = $schedule->teacher?->name ?? $schedule->subject?->teacher ?? '-';
+                    return [$subjectId => $teacherName];
                 });
 
                 $seen      = [];
-                $schedules = $raw->filter(function ($s) use (&$seen) {
+                $schedules = $rawSchedules->filter(function ($s) use (&$seen) {
                     $st  = $s->start_time instanceof Carbon
                         ? $s->start_time->format('H:i')
                         : substr($s->start_time, 0, 5);
@@ -65,14 +76,22 @@ class ScheduleController extends Controller
                     if (isset($seen[$key])) return false;
                     $seen[$key] = true;
                     return true;
-                })->groupBy('day');
+                })->groupBy('day'); // Grouping jadwal per hari untuk ditampilkan di view
             }
 
         } elseif ($user->role === 'guru') {
-            $schedules = Schedule::with(['subject', 'teacher', 'absensiHariIni'])
-                ->where('teacher_id', $user->id)->active()
+            // Ambil jadwal yang teacher_id-nya cocok, ATAU yang nama guru di subject-nya cocok
+            $schedules = Schedule::with(['subject', 'teacher'])
+                ->where(function ($query) use ($user) {
+                    $query->where('teacher_id', $user->id)
+                        ->orWhereHas('subject', function ($subjectQuery) use ($user) {
+                            $subjectQuery->where('teacher', $user->name)
+                                ->orWhere('teacher', $user->email);
+                        });
+                })
+                ->active()
                 ->orderBy('day')->orderBy('start_time')
-                ->get()->groupBy('day');
+                ->get()->groupBy('day'); // Grouping jadwal per hari
         } else {
             $classId   = request()->query('class');
             $query     = Schedule::with(['subject', 'teacher', 'absensiHariIni'])->active();

@@ -164,6 +164,16 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); colo
 }
 </style>
 
+<style>
+.announcement-ticker { overflow:hidden; border:1px solid #bfdbfe; border-radius:12px; background:linear-gradient(90deg,#eff6ff,#eef2ff); margin:0 16px 14px; }
+.announcement-ticker-track { display:flex; width:max-content; animation: announcementMarquee 28s linear infinite; }
+.announcement-ticker:hover .announcement-ticker-track { animation-play-state:paused; }
+.announcement-ticker-item { display:flex; align-items:center; gap:8px; min-width:max-content; padding:10px 22px; color:#1e40af; font-size:12px; font-weight:700; }
+.announcement-ticker-item i { color:#2563eb; }
+@keyframes announcementMarquee { from { transform:translateX(0); } to { transform:translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .announcement-ticker-track { animation:none; } }
+</style>
+
 <div class="app">
     @include('partials.sidebar')
 
@@ -287,6 +297,16 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); colo
                 <div class="list-wrap" style="margin-top:14px;">
                     <div class="list-head">
                         <div class="list-title">Pengumuman Terbaru</div>
+                    </div>
+                    <div class="announcement-ticker" aria-label="Pengumuman berjalan">
+                        <div class="announcement-ticker-track">
+                            @foreach($announcements->take(5) as $a)
+                                <div class="announcement-ticker-item"><i class="fas fa-bullhorn"></i><span>{{ $a->title }}</span>@if($a->is_pinned)<strong>• PIN</strong>@endif</div>
+                            @endforeach
+                            @foreach($announcements->take(5) as $a)
+                                <div class="announcement-ticker-item" aria-hidden="true"><i class="fas fa-bullhorn"></i><span>{{ $a->title }}</span>@if($a->is_pinned)<strong>• PIN</strong>@endif</div>
+                            @endforeach
+                        </div>
                     </div>
                     <table class="tbl">
                         <thead>

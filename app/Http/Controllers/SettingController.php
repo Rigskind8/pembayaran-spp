@@ -13,6 +13,7 @@ class SettingController extends Controller
         $namaSekolah = Setting::get('nama_sekolah', 'SMK Travina Prima');
         $namaBendahara = Setting::get('nama_bendahara', 'Bendahara');
         $waAdminNumber = Setting::get('wa_admin_number', '6281388796229');
+        $kodeSurat = Setting::get('kode_surat', 'SMK-TP');
         $logoSekolah = Setting::get('logo_sekolah');
         $ttd = Setting::get('ttd_bendahara');
         $examDurationUts = Setting::get('exam_duration_uts', 60);
@@ -22,6 +23,7 @@ class SettingController extends Controller
             'namaSekolah',
             'namaBendahara',
             'waAdminNumber',
+            'kodeSurat',
             'logoSekolah',
             'ttd',
             'examDurationUts',
@@ -34,6 +36,7 @@ class SettingController extends Controller
         $request->validate([
             'nama_sekolah' => 'required|string|max:255',
             'nama_bendahara' => 'required|string|max:255',
+            'kode_surat' => 'nullable|string|max:50',
             'wa_admin_number' => 'required|string|max:20',
             'logo_sekolah' => 'nullable|image|mimes:png,jpg,jpeg,webp|max:4096',
             'ttd_bendahara' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
@@ -43,6 +46,7 @@ class SettingController extends Controller
 
         Setting::set('nama_sekolah', $request->nama_sekolah);
         Setting::set('nama_bendahara', $request->nama_bendahara);
+        Setting::set('kode_surat', $request->kode_surat ?: 'SMK-TP');
 
         if ($request->filled('exam_duration_uts')) Setting::set('exam_duration_uts', $request->exam_duration_uts);
         if ($request->filled('exam_duration_uas')) Setting::set('exam_duration_uas', $request->exam_duration_uas);

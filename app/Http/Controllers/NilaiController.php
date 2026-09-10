@@ -313,17 +313,70 @@ class NilaiController extends Controller
 
     public function exportPdf(Request $request)
     {
-        $student = $this->resolveStudentForAuthenticatedUser();
-        if (!$student) {
-            return redirect()->route('dashboard')
-                ->with('error', 'Profil siswa belum terhubung ke akun Anda.');
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+        $student = null;
+
+        if ($request->has('student_id') && in_array($user->role, ['admin', 'guru', 'teacher', 'kepala_sekolah'], true)) {
+            $student = Student::find($request->get('student_id'));
         }
 
-        $semester = $request->get('semester', 1);
-        $tahun    = $request->get('tahun', date('Y'));
+        if (!$student) {
+            $student = $this->resolveStudentForAuthenticatedUser();
+        }
+
+        if (!$student) {
+            return redirect()->route('dashboard')
+                ->with('error', 'Profil siswa tidak ditemukan.');
+        }
+
+        $semester = (int) $request->get('semester', 1);
+        $tahun    = (int) $request->get('tahun', date('Y'));
+
         $nilaiUTS = Nilai::with('subject')->where('student_id', $student->id)->where('type', 'uts')->where('semester', $semester)->where('tahun', $tahun)->get();
         $nilaiUAS = Nilai::with('subject')->where('student_id', $student->id)->where('type', 'uas')->where('semester', $semester)->where('tahun', $tahun)->get();
-        $pdf = Pdf::loadView('nilai.pdf', compact('student', 'nilaiUTS', 'nilaiUAS', 'semester', 'tahun'))->setPaper('a4', 'portrait');
-        return $pdf->download("Nilai_{$student->name}_Sem{$semester}_{$tahun}.pdf");
+
+        // Absensi summary
+        $attendances = \App\Models\Attendance::where('student_id', $student->id)
+            ->whereYear('date', $tahun)
+            ->get();
+
+        $absensiStats = [
+            'hadir' => $attendances->where('status', 'hadir')->count(),
+            'sakit' => $attendances->where('status', 'sakit')->count(),
+            'izin'  => $attendances->where('status', 'izin')->count(),
+            'alpha' => $attendances->where('status', 'alpha')->count(),
+        ];
+
+        // E-signatures & Settings
+        $namaSekolah       = \App\Models\Setting::get('nama_sekolah', 'SMK TRAVINA PRIMA');
+        $namaKepalaSekolah = \App\Models\Setting::get('nama_kepala_sekolah', 'Kepala Sekolah');
+        $ttdKepalaSekolah  = \App\Models\Setting::get('ttd_kepala_sekolah');
+
+        $toDataUri = static function (?string $path): ?string {
+            if (empty($path)) return null;
+            $fullPath = storage_path('app/public/' . ltrim((string)$path, '/'));
+            if (!is_file($fullPath)) return null;
+            $mime = @mime_content_type($fullPath) ?: 'image/png';
+            $data = @file_get_contents($fullPath);
+            return $data ? 'data:' . $mime . ';base64,' . base64_encode($data) : null;
+        };
+
+        $ttdImage = $toDataUri($ttdKepalaSekolah);
+
+        $pdf = Pdf::loadView('nilai.pdf', compact(
+            'student',
+            'nilaiUTS',
+            'nilaiUAS',
+            'semester',
+            'tahun',
+            'absensiStats',
+            'namaSekolah',
+            'namaKepalaSekolah',
+            'ttdImage'
+        ))->setPaper('a4', 'portrait');
+
+        $safeName = str_replace(' ', '_', $student->name);
+        return $pdf->download("Raport_{$safeName}_Sem{$semester}_{$tahun}.pdf");
     }
 }

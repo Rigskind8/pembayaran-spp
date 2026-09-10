@@ -101,6 +101,11 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
                             @error('class_id')<div class="err">{{ $message }}</div>@enderror
                         </div>
                         <div class="form-group">
+                            <label>Tahun Ajaran</label>
+                            <input type="text" name="tahun_ajaran" value="{{ old('tahun_ajaran') }}" placeholder="Contoh: 2025/2026" maxlength="20">
+                            @error('tahun_ajaran')<div class="err">{{ $message }}</div>@enderror
+                        </div>
+                        <div class="form-group">
                             <label>Jenis Kelamin</label>
                             <select name="gender" required>
                                 <option value="">Pilih jenis kelamin</option>
@@ -108,6 +113,21 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
                                 <option value="P" {{ old('gender') === 'P' ? 'selected' : '' }}>Perempuan</option>
                             </select>
                             @error('gender')<div class="err">{{ $message }}</div>@enderror
+                        </div>
+                        <div class="form-group">
+                            <label>Kategori Beasiswa / Diskon</label>
+                            <select name="beasiswa_type">
+                                <option value="reguler" {{ old('beasiswa_type') === 'reguler' ? 'selected' : '' }}>Reguler (Tanpa Beasiswa)</option>
+                                <option value="beasiswa_prestasi" {{ old('beasiswa_type') === 'beasiswa_prestasi' ? 'selected' : '' }}>Beasiswa Prestasi</option>
+                                <option value="kurang_mampu" {{ old('beasiswa_type') === 'kurang_mampu' ? 'selected' : '' }}>Kurang Mampu (KIP)</option>
+                                <option value="anak_yatim" {{ old('beasiswa_type') === 'anak_yatim' ? 'selected' : '' }}>Anak Yatim / Piatu</option>
+                            </select>
+                            @error('beasiswa_type')<div class="err">{{ $message }}</div>@enderror
+                        </div>
+                        <div class="form-group">
+                            <label>Potongan SPP per Bulan (Rp)</label>
+                            <input type="number" name="potongan_spp" value="{{ old('potongan_spp', 0) }}" placeholder="Contoh: 50000" min="0" step="1000">
+                            @error('potongan_spp')<div class="err">{{ $message }}</div>@enderror
                         </div>
                         <div style="display:flex;gap:10px;margin-top:8px;">
                             <button type="submit" class="btn btn-orange">

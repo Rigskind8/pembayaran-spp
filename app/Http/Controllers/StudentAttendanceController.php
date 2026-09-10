@@ -702,4 +702,95 @@ class StudentAttendanceController extends Controller
 
         return Carbon::parse($referenceDate)->startOfWeek(Carbon::MONDAY)->addDays($dayOffsets[$schedule->day]);
     }
+
+    /* ===============================
+       ABSENSI SCANNER QR CODE (GURU / PIKET)
+    =============================== */
+    public function scanQrView()
+    {
+        /** @var User $user */
+        $user = Auth::user();
+        if (!in_array($user->role, ['admin', 'guru', 'teacher', 'kepala_sekolah'], true)) {
+            abort(403, 'Akses terbatas untuk Guru/Piket/Admin.');
+        }
+
+        return view('student-attendance.scan-qr');
+    }
+
+    public function processQrScan(Request $request)
+    {
+        $request->validate([
+            'nis' => 'required|string',
+        ]);
+
+        $nis = trim($request->input('nis'));
+        $student = Student::where('nis', $nis)->orWhere('id', $nis)->first();
+
+        if (!$student) {
+            return response()->json([
+                'success' => false,
+                'message' => "Siswa dengan NIS/ID '{$nis}' tidak ditemukan.",
+            ], 404);
+        }
+
+        $today = today();
+        $dayName = $this->getDayNameIndonesian($today);
+
+        $schedules = Schedule::byClass($student->class_id)
+            ->byDay($dayName)
+            ->active()
+            ->get();
+
+        $scheduleId = $schedules->first()?->id;
+
+        $todayDate = $today->toDateString();
+        $todayDateKey = $today->copy()->startOfDay()->toDateTimeString();
+
+        $existing = Attendance::where('student_id', $student->id)
+            ->whereRaw('date(date) = ?', [$todayDate])
+            ->first();
+
+        if ($existing && $existing->status === 'hadir') {
+            return response()->json([
+                'success' => true,
+                'already_scanned' => true,
+                'message' => "Siswa {$student->name} (NIS: {$student->nis}) sudah melakukan absensi HADIR hari ini.",
+                'student' => [
+                    'name'     => $student->name,
+                    'nis'      => $student->nis,
+                    'class_id' => $student->class_id,
+                ],
+            ]);
+        }
+
+        $attendanceData = [
+            'status'              => 'hadir',
+            'keterangan'          => 'Absen via QR Code Kamera',
+            'submitted_at'        => now(),
+            'verification_status' => 'verified',
+            'created_by'          => Auth::id(),
+        ];
+
+        if ($existing) {
+            $existing->update($attendanceData);
+            $attendance = $existing;
+        } else {
+            $attendance = Attendance::create([
+                'student_id'  => $student->id,
+                'schedule_id' => $scheduleId,
+                'date'        => $todayDateKey,
+            ] + $attendanceData);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => "Absensi HADIR Berhasil! Selamat Datang, {$student->name}.",
+            'student' => [
+                'name'     => $student->name,
+                'nis'      => $student->nis,
+                'class_id' => $student->class_id,
+                'time'     => now()->format('H:i:s'),
+            ],
+        ]);
+    }
 }

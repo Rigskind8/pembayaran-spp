@@ -1,0 +1,11 @@
+.git
+.github
+.env
+.env.example
+Dockerfile
+docker-compose.yml
+README.md
+/vendor
+/node_modules
+/storage/logs/*
+/storage/framework/sessions/*

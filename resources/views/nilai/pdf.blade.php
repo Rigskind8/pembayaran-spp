@@ -226,16 +226,55 @@
         </tbody>
     </table>
 
+    {{-- ABSENSI SUMMARY --}}
+    @if(isset($absensiStats))
+    <div class="sec-title" style="margin-top:15px;">
+        Rekap Kehadiran Siswa
+    </div>
+    <table style="margin-bottom: 20px;">
+        <thead>
+            <tr>
+                <th style="width:25%;">Sakit</th>
+                <th style="width:25%;">Izin</th>
+                <th style="width:25%;">Tanpa Keterangan (Alpha)</th>
+                <th style="width:25%;">Total Hadir</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align:center;font-weight:bold;">{{ $absensiStats['sakit'] ?? 0 }} hari</td>
+                <td style="text-align:center;font-weight:bold;">{{ $absensiStats['izin'] ?? 0 }} hari</td>
+                <td style="text-align:center;font-weight:bold;color:#dc2626;">{{ $absensiStats['alpha'] ?? 0 }} hari</td>
+                <td style="text-align:center;font-weight:bold;color:#059669;">{{ $absensiStats['hadir'] ?? 0 }} hari</td>
+            </tr>
+        </tbody>
+    </table>
+    @endif
+
     {{-- FOOTER --}}
     <div class="footer">
-        <div class="sign-row">
-            <div class="sign-box">
-                <div class="sign-place">Jakarta, {{ date('d F Y') }}</div>
-                <div class="sign-name">Kepala Sekolah</div>
-                <div class="sign-role">SMK Travina Prima</div>
+        <div class="sign-row" style="display: flex; justify-content: space-between; width: 100%;">
+            <div class="sign-box" style="float: left; width: 45%;">
+                <div class="sign-place">&nbsp;</div>
+                <div style="height: 60px;"></div>
+                <div class="sign-name">Orang Tua / Wali Murid</div>
+                <div class="sign-role">Tanda Tangan</div>
             </div>
+            <div class="sign-box" style="float: right; width: 45%;">
+                <div class="sign-place">Bekasi, {{ date('d F Y') }}</div>
+                @if(!empty($ttdImage))
+                    <div style="height: 60px; text-align: center;">
+                        <img src="{{ $ttdImage }}" style="max-height: 55px;" alt="TTD Digital">
+                    </div>
+                @else
+                    <div style="height: 60px;"></div>
+                @endif
+                <div class="sign-name">{{ $namaKepalaSekolah ?? 'Kepala Sekolah' }}</div>
+                <div class="sign-role">{{ $namaSekolah ?? 'SMK TRAVINA PRIMA' }}</div>
+            </div>
+            <div style="clear: both;"></div>
         </div>
-        <div class="print-note">Dokumen ini dicetak secara otomatis oleh sistem Portal Siswa SMK Travina Prima</div>
+        <div class="print-note" style="margin-top: 25px;">Dokumen ini dicetak secara otomatis oleh sistem Portal Akademik {{ $namaSekolah ?? 'SMK Travina Prima' }}</div>
     </div>
 
 </body>

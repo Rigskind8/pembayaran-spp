@@ -20,7 +20,11 @@ class Student extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'nis', 'class_id', 'gender', 'email', 'user_id'];
+    protected $fillable = ['name', 'nis', 'class_id', 'tahun_ajaran', 'gender', 'email', 'user_id', 'beasiswa_type', 'potongan_spp'];
+
+    protected $casts = [
+        'potongan_spp' => 'decimal:2',
+    ];
 
     public function user()
     {

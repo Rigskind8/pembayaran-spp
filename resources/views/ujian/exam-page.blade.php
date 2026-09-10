@@ -90,7 +90,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
             <div class="grid-2">
                 <div class="card">
                     <div class="card-head">
-                        <div><div class="card-ttl">Mapel Tersedia</div><div class="card-sub">Soal akan muncul setelah pembayaran verified</div></div>
+                        <div><div class="card-ttl">Mapel Tersedia</div><div class="card-sub">Soal bisa diakses selama mapel dan soal ujian tersedia</div></div>
                         <span class="badge-soft {{ $accent ?? 'blue' }}">{{ count($cards) }} mapel</span>
                     </div>
                     <div class="exam-list">
@@ -126,12 +126,10 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
                                         <a href="{{ route('ujian.result', [$jenis, $item['subject'], 'attempt' => $item['latestAttempt']->id]) }}" class="exam-action primary"><i class="fas fa-chart-line"></i> Lihat Hasil</a>
                                     @elseif($item['canTake'])
                                         <a href="{{ route('ujian.take', [$jenis, $item['subject']]) }}" class="exam-action primary"><i class="fas fa-pen-to-square"></i> Mulai Ujian</a>
-                                    @elseif($paymentStatus === 'pending')
-                                        <span class="exam-action warning" style="cursor:default;">Menunggu verifikasi admin</span>
-                                    @elseif($paymentStatus === 'verified' && $item['questionCount'] < 5)
+                                    @elseif($item['questionCount'] < 5)
                                         <span class="exam-action secondary" style="cursor:default;">Soal minimal 5 belum terpenuhi</span>
                                     @else
-                                        <span class="exam-action secondary" style="cursor:default;">Bayar dulu untuk membuka soal</span>
+                                        <span class="exam-action secondary" style="cursor:default;">Soal siap, silakan mulai ujian</span>
                                     @endif
                                 </div>
                             </div>

@@ -254,6 +254,16 @@ tbody tr:hover td { background: #fafbff; }
 }
 </style>
 
+<style>
+.announcement-ticker { overflow:hidden; border:1px solid #fde68a; border-radius:12px; background:linear-gradient(90deg,#fffbeb,#fff7ed); margin-bottom:14px; }
+.announcement-ticker-track { display:flex; width:max-content; animation: announcementMarquee 28s linear infinite; }
+.announcement-ticker:hover .announcement-ticker-track { animation-play-state:paused; }
+.announcement-ticker-item { display:flex; align-items:center; gap:8px; min-width:max-content; padding:10px 22px; color:#92400e; font-size:12px; font-weight:700; }
+.announcement-ticker-item i { color:#f59e0b; }
+@keyframes announcementMarquee { from { transform:translateX(0); } to { transform:translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .announcement-ticker-track { animation:none; } }
+</style>
+
 <div class="toasts" id="toasts"></div>
 
 <div class="app">
@@ -267,15 +277,18 @@ tbody tr:hover td { background: #fafbff; }
                 <div class="top-title">Dashboard Siswa</div>
                 <div class="top-sub">{{ date('d M Y') }}</div>
             </div>
-            <div class="user-chip">
-                <div class="chip-av">
-                    @if(!empty(Auth::user()->avatar_path))
-                        <img src="{{ asset('storage/' . Auth::user()->avatar_path) }}" alt="Avatar">
-                    @else
-                        {{ substr(Auth::user()->name, 0, 1) }}
-                    @endif
+            <div style="display:flex;align-items:center;gap:12px;">
+                @include('partials.topbar-notifications')
+                <div class="user-chip">
+                    <div class="chip-av">
+                        @if(!empty(Auth::user()->avatar_path))
+                            <img src="{{ asset('storage/' . Auth::user()->avatar_path) }}" alt="Avatar">
+                        @else
+                            {{ substr(Auth::user()->name, 0, 1) }}
+                        @endif
+                    </div>
+                    <span>{{ Auth::user()->name }}</span>
                 </div>
-                <span>{{ Auth::user()->name }}</span>
             </div>
         </header>
 
@@ -438,6 +451,18 @@ tbody tr:hover td { background: #fafbff; }
                         </div>
                         <div style="padding:16px 20px;">
                             @php $announcementItems = $announcements ?? collect(); @endphp
+                            @if($announcementItems->isNotEmpty())
+                                <div class="announcement-ticker" aria-label="Pengumuman berjalan">
+                                    <div class="announcement-ticker-track">
+                                        @foreach($announcementItems as $ann)
+                                            <div class="announcement-ticker-item"><i class="fas fa-bullhorn"></i><span>{{ $ann->title }}</span>@if($ann->is_pinned)<strong>• PIN</strong>@endif</div>
+                                        @endforeach
+                                        @foreach($announcementItems as $ann)
+                                            <div class="announcement-ticker-item" aria-hidden="true"><i class="fas fa-bullhorn"></i><span>{{ $ann->title }}</span>@if($ann->is_pinned)<strong>• PIN</strong>@endif</div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
                             @forelse($announcementItems as $ann)
                                 <div style="padding-bottom:12px;border-bottom:1px solid var(--border);margin-bottom:12px;">
                                     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;">

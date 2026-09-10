@@ -1,7 +1,7 @@
 services:
   - type: web
     name: pembayaran-spp
-    env: php
+    env: docker
     plan: free
     buildCommand: |
       composer install --no-interaction --prefer-dist --optimize-autoloader

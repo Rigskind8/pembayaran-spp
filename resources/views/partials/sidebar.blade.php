@@ -158,6 +158,18 @@
                         <span class="sb-lbl">Pengguna</span>
                     </a>
                 @endif
+                @if(Route::has('surat.index'))
+                    <a href="{{ route('surat.index') }}" class="sb-a {{ request()->routeIs('surat.*') ? 'on' : '' }}">
+                        <div class="ic"><i class="fas fa-envelope-open-text"></i></div>
+                        <span class="sb-lbl">Surat Masuk/Keluar</span>
+                    </a>
+                @endif
+                @if(Route::has('admin.activity-logs'))
+                    <a href="{{ route('admin.activity-logs') }}" class="sb-a {{ request()->routeIs('admin.activity-logs') ? 'on' : '' }}">
+                        <div class="ic"><i class="fas fa-receipt"></i></div>
+                        <span class="sb-lbl">Activity Log</span>
+                    </a>
+                @endif
             @endif
 
             @if($isAdminSchoolRole || $isGuruRole || ($role === 'siswa' && Route::has('nilai.student')))
@@ -171,6 +183,12 @@
                     <a href="{{ route('absensi.admin') }}" class="sb-a {{ request()->routeIs('absensi.admin') ? 'on' : '' }}">
                         <div class="ic"><i class="fas fa-calendar-check"></i></div>
                         <span class="sb-lbl">Input Presensi</span>
+                    </a>
+                @endif
+                @if(($isAdminSchoolRole || $isGuruRole || $isKepsekRole) && Route::has('attendance.scanQr'))
+                    <a href="{{ route('attendance.scanQr') }}" class="sb-a {{ request()->routeIs('attendance.scanQr') ? 'on' : '' }}">
+                        <div class="ic"><i class="fas fa-qrcode"></i></div>
+                        <span class="sb-lbl">Scan QR Absensi</span>
                     </a>
                 @endif
                 @if($isAdminSchoolRole && Route::has('schedule.manage'))

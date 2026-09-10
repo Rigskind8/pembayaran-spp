@@ -293,7 +293,12 @@
                         <option value="2" {{ $semester == 2 ? 'selected' : '' }}>Semester 2</option>
                     </select>
                     <input type="number" name="tahun" value="{{ $tahun }}" class="form-control" style="width: 100px;">
-                    <button type="submit" class="btn btn-blue">Filter</button>
+                    <button type="submit" class="btn btn-blue"><i class="fas fa-filter"></i> Filter</button>
+                    @if($studentId)
+                        <a href="{{ route('nilai.exportPdf', ['student_id' => $studentId, 'semester' => $semester, 'tahun' => $tahun]) }}" class="btn" style="background:#ecfdf5;color:#059669;border:1px solid #a7f3d0;">
+                            <i class="fas fa-file-pdf"></i> Cetak Raport Digital PDF
+                        </a>
+                    @endif
                 </form>
 
                 @if($nilais->count() > 0)

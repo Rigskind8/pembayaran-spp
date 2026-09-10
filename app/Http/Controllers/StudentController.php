@@ -26,7 +26,10 @@ class StudentController extends Controller
             'nis' => 'required|string|unique:students,nis',
             'email' => 'required|email|unique:students,email',
             'class_id' => 'required|string|max:50',
+            'tahun_ajaran' => 'nullable|string|max:20',
             'gender' => 'required|in:L,P',
+            'beasiswa_type' => 'nullable|string|in:reguler,beasiswa_prestasi,kurang_mampu,anak_yatim',
+            'potongan_spp' => 'nullable|numeric|min:0',
         ]);
 
         Student::create($validated);
@@ -50,7 +53,10 @@ class StudentController extends Controller
             'nis' => 'required|string|unique:students,nis,'.$student->id,
             'email' => 'required|email|unique:students,email,'.$student->id,
             'class_id' => 'required|string|max:50',
+            'tahun_ajaran' => 'nullable|string|max:20',
             'gender' => 'required|in:L,P',
+            'beasiswa_type' => 'nullable|string|in:reguler,beasiswa_prestasi,kurang_mampu,anak_yatim',
+            'potongan_spp' => 'nullable|numeric|min:0',
         ]);
 
         $student->update($validated);
