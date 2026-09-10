@@ -197,6 +197,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/nilai', [NilaiController::class, 'student'])->name('nilai.student');
     Route::get('/nilai/export-pdf', [NilaiController::class, 'exportPdf'])->name('nilai.exportPdf');
 
+    // Fitur Absensi Siswa
+    Route::get('/absensi-siswa', [StudentAttendanceController::class, 'todaySchedule'])->name('student.attendance.today');
+    Route::post('/absen-mapel/{schedule?}', [StudentAttendanceController::class, 'submitAttendance'])->name('student.attendance.submit');
+    Route::post('/absensi', [StudentAttendanceController::class, 'submitAttendance'])->name('student.attendance.post');
+    Route::get('/riwayat-absensi-siswa', [StudentAttendanceController::class, 'myAttendanceHistory'])->name('attendance.history');
+    Route::post('/absensi-undo/{attendance}', [StudentAttendanceController::class, 'undoAttendance'])->name('student.attendance.undo');
+
     // Jadwal UTS/UAS siswa
     Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/ujian/jadwal', [UjianController::class, 'jadwalUjian'])->name('ujian.jadwal');

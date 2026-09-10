@@ -42,6 +42,18 @@
                     <span class="sb-lbl">Jadwal Pelajaran</span>
                 </a>
             @endif
+            @if(Route::has('student.attendance.today'))
+                <a href="{{ route('student.attendance.today') }}" class="sb-a {{ request()->routeIs('student.attendance.today') || request()->is('absensi-siswa*') ? 'on' : '' }}">
+                    <div class="ic"><i class="fas fa-user-check"></i></div>
+                    <span class="sb-lbl">Absen Hari Ini</span>
+                </a>
+            @endif
+            @if(Route::has('attendance.history'))
+                <a href="{{ route('attendance.history') }}" class="sb-a {{ request()->routeIs('attendance.history') || request()->is('riwayat-absensi-siswa*') ? 'on' : '' }}">
+                    <div class="ic"><i class="fas fa-calendar-check"></i></div>
+                    <span class="sb-lbl">Riwayat Absensi</span>
+                </a>
+            @endif
             @if(Route::has('nilai.student'))
                 <a href="{{ route('nilai.student') }}" class="sb-a {{ request()->routeIs('nilai.student') ? 'on' : '' }}">
                     <div class="ic"><i class="fas fa-star"></i></div>
