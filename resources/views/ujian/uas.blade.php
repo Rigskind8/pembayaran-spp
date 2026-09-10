@@ -1,11 +1,14 @@
+{{-- resources/views/ujian/uas.blade.php --}}
 @extends('layouts.app')
-@section('title', 'Pembayaran UAS - SMK TRAVINA PRIMA  ')
+
+@section('title', 'Ujian Akhir Semester (UAS) - ' . config('app.name', 'SMK TRAVINA PRIMA'))
+
 @section('content')
     @include('ujian.exam-page', [
-        'jenis' => 'uas',
-        'pageTitle' => 'Pengajuan UAS',
-        'pageSubtitle' => 'Ujian Akhir Semester · ' . date('Y') . '/' . (date('Y') + 1),
-        'pageTag' => 'Ujian Akhir Semester',
-        'accent' => 'purple',
+        'jenis'        => 'uas',
+        'pageTitle'    => 'Ujian Akhir Semester (UAS)',
+        'pageSubtitle' => 'Portal Pengerjaan Soal UAS · Tahun Pelajaran ' . date('Y') . '/' . (date('Y') + 1),
+        'pageTag'      => 'Ujian Akhir Semester',
+        'accent'       => 'purple',
     ])
 @endsection
