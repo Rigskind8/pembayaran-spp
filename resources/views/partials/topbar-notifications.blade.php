@@ -78,3 +78,4 @@ function markAllNotificationsRead() {
     });
 }
 </script>
+
