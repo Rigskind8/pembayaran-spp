@@ -336,9 +336,11 @@ class UjianController extends Controller
         }
 
         $validated = $request->validate([
-            'answers' => 'nullable|array',
+            'answers'      => 'nullable|array',
+            'is_violation' => 'nullable',
         ]);
 
+        $isViolation = $request->boolean('is_violation');
         $answers = $validated['answers'] ?? [];
         $correctCount = 0;
         $maxScore = 0;
@@ -357,13 +359,19 @@ class UjianController extends Controller
 
         foreach ($orderedQuestions as $question) {
             $maxScore += (int) $question->points;
-            $selected = $answers[$question->id] ?? null;
-            $isCorrect = $selected === $question->correct_answer;
 
-            $storedAnswers[$question->id] = [
-                'selected' => $selected,
-                'correct' => $question->correct_answer,
-                'is_correct' => $isCorrect,
+            // Jika siswa tidak menjawab atau mengosongkan, selected TETAP NULL (KOSONG)
+            $rawSelected = $answers[$question->id] ?? null;
+            $selected = ($rawSelected !== null && $rawSelected !== '') ? (string) $rawSelected : null;
+            
+            // Jawaban benar hanya jika siswa memang menjawab dan cocok, serta tidak ada pelanggaran
+            $isCorrect = (!$isViolation && $selected !== null) ? ($selected === $question->correct_answer) : false;
+
+            $storedAnswers[(string) $question->id] = [
+                'selected'      => $selected,
+                'correct'       => $question->correct_answer,
+                'is_correct'    => $isCorrect,
+                'is_unanswered' => ($selected === null),
             ];
 
             if ($isCorrect) {
@@ -371,6 +379,17 @@ class UjianController extends Controller
                 $score += (int) $question->points;
             }
         }
+
+        // Jika terdeteksi kecurangan/pelanggaran, skor dan jumlah benar wajib 0
+        if ($isViolation) {
+            $score = 0;
+            $correctCount = 0;
+        }
+
+        $storedAnswers['_meta'] = [
+            'is_violation'     => $isViolation,
+            'violation_reason' => $isViolation ? 'Terdeteksi keluar dari fullscreen / berpindah aplikasi sebanyak 3 kali' : null,
+        ];
 
         $attempt = ExamAttempt::create([
             'user_id'         => Auth::id(),
@@ -388,14 +407,18 @@ class UjianController extends Controller
 
         $this->clearExamSession($jenis, $subject);
 
+        $msg = $isViolation
+            ? 'Ujian diakhiri karena pelanggaran aturan. Nilai: 0'
+            : 'Jawaban berhasil dikirim. Nilai kamu: ' . $score . ' / ' . $maxScore;
+
         return redirect()
             ->route('ujian.result', [$jenis, $subject, 'attempt' => $attempt->id])
-            ->with('success', 'Jawaban berhasil dikirim. Nilai kamu: ' . $score . ' / ' . $maxScore);
+            ->with($isViolation ? 'error' : 'success', $msg);
     }
 
     public function examResult(Request $request, string $jenis, Subject $subject)
     {
-        [$jenis, $attempt, $details] = $this->resolveExamResultData($request, $jenis, $subject);
+        [$jenis, $attempt, $details, $isViolation, $meta] = $this->resolveExamResultData($request, $jenis, $subject);
 
         if (!$attempt) {
             return redirect()
@@ -403,12 +426,12 @@ class UjianController extends Controller
                 ->with('error', 'Belum ada hasil ujian untuk mapel ini.');
         }
 
-        return view('ujian.hasil', compact('jenis', 'subject', 'attempt', 'details'));
+        return view('ujian.hasil', compact('jenis', 'subject', 'attempt', 'details', 'isViolation', 'meta'));
     }
 
     public function examResultPdf(Request $request, string $jenis, Subject $subject)
     {
-        [$jenis, $attempt, $details] = $this->resolveExamResultData($request, $jenis, $subject);
+        [$jenis, $attempt, $details, $isViolation, $meta] = $this->resolveExamResultData($request, $jenis, $subject);
 
         if (!$attempt) {
             return redirect()
@@ -431,7 +454,9 @@ class UjianController extends Controller
             'details',
             'studentName',
             'studentNis',
-            'studentClass'
+            'studentClass',
+            'isViolation',
+            'meta'
         ))
             ->setPaper('a4', 'portrait');
 
@@ -460,11 +485,15 @@ class UjianController extends Controller
 
         $attempt = $attemptQuery->first();
         if (!$attempt) {
-            return [$jenis, null, collect()];
+            return [$jenis, null, collect(), false, []];
         }
 
-        $answerData = collect($attempt->answers ?? []);
-        $questionIds = $answerData->keys()->map(fn ($id) => (int) $id)->values();
+        $rawAnswers = (array) ($attempt->answers ?? []);
+        $meta = (array) ($rawAnswers['_meta'] ?? []);
+        $isViolation = !empty($meta['is_violation']);
+
+        $answerData = collect($rawAnswers)->except('_meta');
+        $questionIds = $answerData->keys()->map(fn ($id) => (int) $id)->filter(fn ($id) => $id > 0)->values();
 
         $questions = ExamQuestion::with('subject')
             ->whereIn('id', $questionIds)
@@ -478,16 +507,19 @@ class UjianController extends Controller
             }
 
             $data = $answerData->get((string) $questionId, []);
+            $rawSelected = $data['selected'] ?? null;
+            $selected = ($rawSelected !== null && $rawSelected !== '') ? (string) $rawSelected : null;
 
             return [
-                'question' => $question,
-                'selected' => $data['selected'] ?? null,
-                'correct' => $data['correct'] ?? $question->correct_answer,
-                'is_correct' => (bool) ($data['is_correct'] ?? false),
+                'question'      => $question,
+                'selected'      => $selected,
+                'correct'       => $data['correct'] ?? $question->correct_answer,
+                'is_correct'    => (bool) ($data['is_correct'] ?? false),
+                'is_unanswered' => ($selected === null),
             ];
         })->filter()->values();
 
-        return [$jenis, $attempt, $details];
+        return [$jenis, $attempt, $details, $isViolation, $meta];
     }
 
     private function renderPaymentPage(string $jenis)
@@ -596,15 +628,23 @@ class UjianController extends Controller
             return;
         }
 
+        $rawAnswers = (array) ($attempt->answers ?? []);
+        $meta = (array) ($rawAnswers['_meta'] ?? []);
+        $isViolation = !empty($meta['is_violation']);
+
         $maxScore = (float) $attempt->max_score;
         $rawScore = (float) $attempt->score;
-        $finalScore = $maxScore > 0
+        $finalScore = ($maxScore > 0 && !$isViolation)
             ? round(($rawScore / $maxScore) * 100, 2)
             : 0.00;
 
         $submittedAt = $attempt->submitted_at ?? now();
         $semester = ((int) $submittedAt->month >= 7) ? 1 : 2;
         $tahun = (int) $submittedAt->year;
+
+        $keterangan = $isViolation
+            ? 'Diskualifikasi - Pelanggaran Ujian Online (Keluar Layar Penuh/Pindah Tab)'
+            : 'Auto dari hasil ' . strtoupper((string) $attempt->type);
 
         Nilai::updateOrCreate(
             [
@@ -616,7 +656,7 @@ class UjianController extends Controller
             ],
             [
                 'nilai'      => $finalScore,
-                'keterangan' => 'Auto dari hasil ' . strtoupper((string) $attempt->type),
+                'keterangan' => $keterangan,
             ]
         );
     }

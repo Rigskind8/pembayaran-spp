@@ -71,12 +71,29 @@
         </thead>
         <tbody>
             @forelse($details as $index => $detail)
+                @php
+                    $isUnanswered = empty($detail['selected']);
+                @endphp
                 <tr>
                     <td>{{ $index + 1 }}</td>
                     <td>{{ $detail['question']->question }}</td>
-                    <td>{{ strtoupper((string) ($detail['selected'] ?? '-')) }}</td>
+                    <td>
+                        @if($isUnanswered)
+                            <span style="color: #64748b; font-style: italic;">(Kosong)</span>
+                        @else
+                            <strong>{{ strtoupper($detail['selected']) }}</strong>
+                        @endif
+                    </td>
                     <td>{{ strtoupper((string) ($detail['correct'] ?? '-')) }}</td>
-                    <td class="{{ $detail['is_correct'] ? 'ok' : 'bad' }}">{{ $detail['is_correct'] ? 'Benar' : 'Salah' }}</td>
+                    <td>
+                        @if($isUnanswered)
+                            <span style="color: #64748b;">Tidak Dijawab</span>
+                        @elseif($detail['is_correct'])
+                            <span class="ok">Benar</span>
+                        @else
+                            <span class="bad">Salah</span>
+                        @endif
+                    </td>
                 </tr>
             @empty
                 <tr>

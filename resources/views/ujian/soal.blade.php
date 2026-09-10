@@ -222,6 +222,27 @@
         border-radius: 6px;
     }
 
+    .btn-clear-choice {
+        background: transparent;
+        border: 1px solid #cbd5e1;
+        color: #64748b;
+        border-radius: 8px;
+        padding: 3px 10px;
+        font-size: 11px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all .15s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .btn-clear-choice:hover {
+        background: #fee2e2;
+        border-color: #fca5a5;
+        color: #dc2626;
+    }
+
     .q-text-body {
         font-size: 15px;
         font-weight: 600;
@@ -615,6 +636,7 @@
 
         <form id="examSubmitForm" action="{{ route('ujian.submit', [$jenis, $subject]) }}" method="POST">
             @csrf
+            <input type="hidden" name="is_violation" id="isViolationInput" value="0">
             <div class="question-list">
                 @foreach($questions as $index => $question)
                     @php
@@ -625,7 +647,12 @@
                             <div class="q-number-badge">
                                 <span>Nomor {{ $index + 1 }}</span>
                             </div>
-                            <span class="q-points-badge">{{ (int) $question->points }} Poin</span>
+                            <div class="d-flex align-items-center gap-2">
+                                <button type="button" class="btn-clear-choice" onclick="clearQuestionAnswer('{{ $question->id }}')" title="Kosongkan jawaban soal ini jika tidak ingin menjawab">
+                                    <i class="fas fa-undo"></i> Kosongkan
+                                </button>
+                                <span class="q-points-badge">{{ (int) $question->points }} Poin</span>
+                            </div>
                         </div>
 
                         {{-- Teks Soal --}}
@@ -855,6 +882,35 @@
             }
         }
 
+        // Fungsi mengosongkan jawaban pada nomor soal tertentu
+        window.clearQuestionAnswer = function (qid) {
+            const card = document.getElementById('questionCard_' + qid);
+            if (!card) return;
+            const radios = card.querySelectorAll('input[type="radio"]');
+            radios.forEach(radio => {
+                radio.checked = false;
+            });
+            updateAnswerStatus();
+        };
+
+        // Support toggle uncheck: Klik opsi yang sudah terpilih untuk membatalkan / mengosongkan pilihan
+        document.querySelectorAll('.option-item-label').forEach(label => {
+            label.addEventListener('click', function (e) {
+                if (e.target.tagName === 'INPUT') return;
+                e.preventDefault();
+
+                const radio = this.querySelector('input[type="radio"]');
+                if (!radio || radio.disabled) return;
+
+                if (radio.checked) {
+                    radio.checked = false;
+                } else {
+                    radio.checked = true;
+                }
+                updateAnswerStatus();
+            });
+        });
+
         form.querySelectorAll('input[type="radio"]').forEach(radio => {
             radio.addEventListener('change', updateAnswerStatus);
         });
@@ -929,7 +985,9 @@
 
                     setTimeout(() => {
                         if (violationCount >= maxViolations) {
-                            alert("🚨 KECURANGAN TERDETEKSI! 🚨\n\nAnda telah keluar dari layar penuh sebanyak " + maxViolations + " kali. Lembar jawaban Anda dikirim otomatis.");
+                            alert("🚨 KECURANGAN TERDETEKSI! 🚨\n\nAnda telah keluar dari layar penuh sebanyak " + maxViolations + " kali. Ujian diakhiri dengan status PELANGGARAN. Jawaban yang belum diisi tetap KOSONG.");
+                            const violationInput = document.getElementById('isViolationInput');
+                            if (violationInput) violationInput.value = '1';
                             form.submit();
                         } else {
                             alert("⚠️ PERINGATAN KECURANGAN (" + violationCount + "/" + maxViolations + ") ⚠️\n\nAnda terdeteksi keluar dari Fullscreen (Menekan ESC)! Klik OK untuk kembali ke mode layar penuh.");
@@ -948,7 +1006,9 @@
 
                 setTimeout(() => {
                     if (violationCount >= maxViolations) {
-                        alert("🚨 KECURANGAN TERDETEKSI! 🚨\n\nAnda telah berpindah tab sebanyak " + maxViolations + " kali. Ujian diakhiri otomatis.");
+                        alert("🚨 KECURANGAN TERDETEKSI! 🚨\n\nAnda telah berpindah tab sebanyak " + maxViolations + " kali. Ujian diakhiri dengan status PELANGGARAN. Jawaban yang belum diisi tetap KOSONG.");
+                        const violationInput = document.getElementById('isViolationInput');
+                        if (violationInput) violationInput.value = '1';
                         form.submit();
                     } else {
                         alert("⚠️ PERINGATAN KECURANGAN (" + violationCount + "/" + maxViolations + ") ⚠️\n\nAnda terdeteksi berpindah tab atau mengecilkan browser! Dilarang meninggalkan halaman ujian.");
