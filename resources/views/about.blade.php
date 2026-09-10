@@ -260,6 +260,24 @@
         background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--accent-3));
         transition: transform .08s linear;
     }
+    .skip-link {
+        position: absolute;
+        top: -100px;
+        left: 24px;
+        background: var(--primary);
+        color: #fff;
+        padding: 10px 18px;
+        border-radius: 999px;
+        z-index: 9999;
+        font-weight: 700;
+        font-size: 13px;
+        text-decoration: none;
+        box-shadow: 0 10px 24px rgba(0,0,0,.2);
+        transition: top 0.2s ease;
+    }
+    .skip-link:focus {
+        top: 16px;
+    }
     .about-wrap::before,
     .about-wrap::after {
         content: '';
@@ -729,6 +747,7 @@
 </style>
 
 <div class="about-wrap">
+    <a href="#main-content" class="skip-link">Lewati ke konten</a>
     <div class="scroll-progress" aria-hidden="true"><div class="scroll-progress-bar" id="about-scroll-progress"></div></div>
     <div class="about-shell">
         <header class="about-nav reveal is-visible">
@@ -770,7 +789,7 @@
             </div>
         </header>
 
-        <section class="hero reveal is-visible">
+        <section class="hero reveal is-visible" id="main-content" tabindex="-1">
             <div>
                 <div class="pill">Akreditasi A - {{ $schoolName }}</div>
                 <h1>Membentuk lulusan siap kerja, siap lanjut, dan siap bersaing.</h1>
