@@ -467,7 +467,7 @@
             <h1>Jadwal Hari Ini: {{ $dayName }}, {{ \Carbon\Carbon::parse($today)->format('d M Y') }}</h1>
             <div>
                 <a href="{{ route('attendance.history') }}" class="btn btn-outline-primary" style="margin-right:8px;">Riwayat Absensi</a>
-                <a href="{{ route('schedule.week') }}" class="btn btn-outline-info">Jadwal Minggu Ini</a>
+                <a href="{{ Route::has('schedule.index') ? route('schedule.index') : url('/jadwal') }}" class="btn btn-outline-info">Jadwal Pelajaran</a>
             </div>
         </div>
 
