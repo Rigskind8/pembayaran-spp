@@ -726,7 +726,7 @@ document.getElementById('attendanceForm').addEventListener('submit', function() 
     document.getElementById('loadingIndicator').style.display = 'block';
     document.getElementById('submitBtn').disabled = true;
     document.getElementById('feedbackArea').innerHTML = ''; // Clear previous feedback
-}
+});
 
 // Aksesibilitas: tombol bisa diakses keyboard
 document.addEventListener('keydown', function(e) {
