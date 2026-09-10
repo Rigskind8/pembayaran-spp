@@ -200,9 +200,10 @@ Route::middleware('auth')->group(function () {
     // Fitur Absensi Siswa
     Route::get('/absensi-siswa', [StudentAttendanceController::class, 'todaySchedule'])->name('student.attendance.today');
     Route::post('/absen-mapel/{schedule?}', [StudentAttendanceController::class, 'submitAttendance'])->name('student.attendance.submit');
-    Route::post('/absensi', [StudentAttendanceController::class, 'submitAttendance'])->name('student.attendance.post');
+    Route::post('/absensi', [StudentAttendanceController::class, 'submitAttendance'])->name('absensi.store');
     Route::get('/riwayat-absensi-siswa', [StudentAttendanceController::class, 'myAttendanceHistory'])->name('attendance.history');
-    Route::post('/absensi-undo/{attendance}', [StudentAttendanceController::class, 'undoAttendance'])->name('student.attendance.undo');
+    Route::post('/absensi-undo/{attendance}', [StudentAttendanceController::class, 'undoAttendance'])->name('attendance.undo');
+    Route::post('/student-absensi-undo/{attendance}', [StudentAttendanceController::class, 'undoAttendance'])->name('student.attendance.undo');
 
     // Jadwal UTS/UAS siswa
     Route::middleware(['auth', 'verified'])->group(function () {
