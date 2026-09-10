@@ -27,32 +27,52 @@ class UjianController extends Controller
     public function jadwalUjian(Request $request)
     {
         $user = Auth::user();
-        $student = Student::findByUser($user);
-        if (!$student) {
-            abort(403, 'Siswa tidak ditemukan');
+        $student = $user ? Student::findByUser($user) : null;
+        if (!$student && $user?->role === 'siswa') {
+            $student = Student::createForUser($user);
         }
 
-        // Ambil semua jadwal aktif untuk kelas siswa
-        $schedules = \App\Models\Schedule::active()
-            ->where('class_id', $student->class_id)
-            ->orderBy('day')
+        // Jika bukan siswa atau belum ada data siswa, ambil siswa pertama sebagai fallback (misal saat admin preview)
+        if (!$student) {
+            $student = Student::first();
+        }
+
+        $classId = $student ? $student->class_id : null;
+
+        // Ambil semua jadwal aktif untuk kelas siswa, diurutkan menurut hari kerja (Senin s.d. Minggu) dan jam mulai
+        $schedulesQuery = \App\Models\Schedule::active();
+        if ($classId) {
+            $schedulesQuery->where('class_id', $classId);
+        }
+
+        $schedules = $schedulesQuery
+            ->orderByRaw("FIELD(LOWER(day), 'senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu', 'minggu')")
             ->orderBy('start_time')
             ->with(['subject', 'teacher'])
             ->get();
 
         // Format jadwal untuk tampilan
         $scheduleList = $schedules->map(function($sch) {
+            $startTime = $sch->start_time ? \Carbon\Carbon::parse($sch->start_time) : null;
+            $endTime = $sch->end_time ? \Carbon\Carbon::parse($sch->end_time) : null;
+            $durationMinutes = ($startTime && $endTime) ? $startTime->diffInMinutes($endTime) : null;
+
             return [
-                'day'     => ucfirst($sch->day),
-                'date'    => '', // Optional: bisa diisi jika ada tanggal khusus UTS/UAS
-                'time'    => ($sch->start_time ? \Carbon\Carbon::parse($sch->start_time)->format('H:i') : '-') . ' - ' . ($sch->end_time ? \Carbon\Carbon::parse($sch->end_time)->format('H:i') : '-'),
-                'subject' => $sch->subject->name ?? '-',
-                'teacher' => $sch->teacher->name ?? '-',
-                'room'    => $sch->room ?? '-',
+                'id'       => $sch->id,
+                'day'      => ucfirst($sch->day),
+                'date'     => '', // Bisa diisi tanggal khusus UTS/UAS
+                'time'     => ($startTime ? $startTime->format('H:i') : '-') . ' - ' . ($endTime ? $endTime->format('H:i') : '-'),
+                'duration' => $durationMinutes ? $durationMinutes . ' Menit' : null,
+                'subject'  => $sch->subject->name ?? '-',
+                'subject_id' => $sch->subject_id ?? null,
+                'teacher'  => $sch->teacher->name ?? '-',
+                'room'     => $sch->room ?? '-',
+                'class_id' => $sch->class_id ?? '-',
             ];
         });
 
         return view('ujian.schedule', [
+            'student'      => $student,
             'scheduleList' => $scheduleList,
         ]);
     }
