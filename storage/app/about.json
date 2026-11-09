@@ -1,0 +1,36 @@
+{
+    "vision": null,
+    "mission": null,
+    "programs": null,
+    "history": null,
+    "facilities": null,
+    "student_life": null,
+    "seo": null,
+    "gallery": [
+        {
+            "url": "\/storage\/about\/gallery\/SzZ6zn5ocn8Pwn5vTS06jE0CYSiyTewWuQPw9667.webp",
+            "label": "Praktik TKJ"
+        },
+        {
+            "url": "\/storage\/about\/gallery\/RTixUiQmigkQxAwMg4oSnsMbdVkItgpP5X1Rg6M9.jpg",
+            "label": "Kegiatan Sekolah"
+        },
+        {
+            "url": "\/storage\/about\/gallery\/cu9nEUhjG5lVmoQpKf3BZoh2wGArA7X1cdYJKgLC.jpg",
+            "label": "Praktik TKJ"
+        },
+        {
+            "url": "\/storage\/about\/gallery\/TGXU54yfVCQHOJOlo9PzRpej4RbGwiAqFp9gDbfo.jpg",
+            "label": "Halaman Sekolah"
+        },
+        {
+            "url": "\/storage\/about\/gallery\/bMwAwnGqmaWS8vwwgQFspw7Ns2eH2J99vVfynMjM.jpg",
+            "label": "Gedung Sekolah"
+        },
+        {
+            "url": "\/storage\/about\/gallery\/xvxKLH1hrfV8sYu9f1ftd9kV87UhRJZiCqgykPMX.jpg",
+            "label": "Maxresdefault"
+        }
+    ],
+    "hero_overlay_image": "\/storage\/about\/hero\/aFkZfOcboZK5QRnFNP6jwtkiqS3wmf8IPOCsarJm.jpg"
+}

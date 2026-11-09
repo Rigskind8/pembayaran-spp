@@ -15,7 +15,8 @@
 /node_modules
 /public/build
 /public/hot
-/public/storage
+/public/storage/payments/bukti/*
+/public/storage/bukti_ujian/*
 /storage/*.key
 /storage/pail
 /vendor
