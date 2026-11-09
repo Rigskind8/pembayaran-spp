@@ -14,6 +14,7 @@ use App\Http\Controllers\MapelController;
 use App\Http\Controllers\NilaiController;
 use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\PengumumanController;
+use App\Http\Controllers\PublicMediaController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\StudentAttendanceController;
@@ -51,6 +52,10 @@ Route::get('/', function () {
 
 // Legacy URL: keep /about working but canonical URL is /
 Route::get('/about', fn() => redirect()->route('about'));
+
+Route::get('/storage/{path}', [PublicMediaController::class, 'show'])
+    ->where('path', '.*')
+    ->name('public-media.show');
 
 // About brochure PDF (printable)
 Route::get('/about/brochure', function () {

@@ -7,13 +7,18 @@
     "api/index.php": {
       "runtime": "vercel-php@0.7.3",
       "memory": 1024,
-      "maxDuration": 30
+      "maxDuration": 30,
+      "includeFiles": "public/storage/**"
     }
   },
   "routes": [
     {
       "src": "/build/(.*)",
       "dest": "/build/$1"
+    },
+    {
+      "src": "/storage/(.*)",
+      "dest": "/api/index.php"
     },
     {
       "src": "/(.*\\.(?:css|js|png|jpg|jpeg|gif|svg|ico|ttf|woff|woff2|eot|otf|webp|avif|txt|json|webmanifest|mp3|wav))",
